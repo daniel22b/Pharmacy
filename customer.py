@@ -1,36 +1,30 @@
 import csv
 import os
-from datetime import datetime
 import random
+from datetime import datetime
 
 CUSTOMER_FILE = "DATABASE/customers.csv"
+ADRESS_FILE = "address.csv"
 
-# Tworzy plik z nagłówkiem jeśli nie istnieje
-def init_customer_file():
-    if not os.path.exists(CUSTOMER_FILE):
-        with open(CUSTOMER_FILE, mode='w', newline='', encoding='utf-8') as f:
-            writer = csv.writer(f)
-            writer.writerow(["ID", "NAME", "EMAIL", "PHONE", "CREATED", "UPDATED"])
 
-def generate_unique_id():
-    existing_ids = set()
-    if os.path.exists(CUSTOMER_FILE):
-        with open(CUSTOMER_FILE, mode='r', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
-            existing_ids = {row["ID"] for row in reader}
-    
-    while True:
-        new_id = ''.join(str(random.randint(0, 9)) for _ in range(4))
-        if new_id not in existing_ids:
-            return new_id
+def generate_id():
+    return ''.join(str(random.randint(0, 9)) for _ in range(4))
 
-def add_customer(name, email, phone):
-    init_customer_file()
-    customer_id = generate_unique_id()
+def add_customer(name, email, phone,date_of_birth,gender,street,city,country):
+    # if not os.path.exists(CUSTOMER_FILE):
+    #     with open(CUSTOMER_FILE, 'w', newline='', encoding='utf-8') as f:
+    #         writer = csv.writer(f)
+    #         writer.writerow(["ID", "NAME", "EMAIL", "PHONE", "CREATED", "UPDATED","DATE_OF_BIRTH","GENDER"])
+
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    customer_id = generate_id()
 
-    with open(CUSTOMER_FILE, mode='a', newline='', encoding='utf-8') as f:
+    with open(CUSTOMER_FILE, 'a', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
-        writer.writerow([customer_id, name, email, phone, now, now])
-    
+        writer.writerow([customer_id, name, email, phone, now, now,date_of_birth,gender])
+
+    with open(ADRESS_FILE, 'a', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow([customer_id,street,city,country])
+
     return customer_id
