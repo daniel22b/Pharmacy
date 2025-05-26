@@ -57,15 +57,15 @@
 ## tak aby klient miał możliwość zakupu dowolnej liczby leków równocześnie (bez recepty)
 
 ## WYMAGANIA:
-## - możesz programować wyłącznie w paradygmacie funkcyjnym
+## - +możesz programować wyłącznie w paradygmacie funkcyjnym
 ## - utwórz funkcję wyższego rzędu
 ## - utwórz funkcję wielu zmiennych wejściowych
-## - utwórz funkcję zagnieżdzoną
+## - +utwórz funkcję zagnieżdzoną
 ## - użyj dekoratora
 ## - wykonaj dokumentację dla conajmniej 3 funkcji i 2 modułów
 ## - conajmniej dla 3 funkcji wykonaj obsługę wyjątków
-## - wykonaj interfejs graficzny dla użytkownika  
-## - pakiet powinien być udostępniony w repozytorium github
+## - +wykonaj interfejs graficzny dla użytkownika  
+## - +pakiet powinien być udostępniony w repozytorium github
 
 ## WSKAZANIA:
 ## - możesz zwiększyć liczbę modułów
