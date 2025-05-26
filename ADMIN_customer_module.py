@@ -1,9 +1,10 @@
 import PySimpleGUI as sg
 import os
 import pandas as pd
+from Add_del_customer import add_customer,remove_customer
 
-
-CUSTOMERS_FILE = "DATABASE/customers.csv"
+ADRESS_FILE = "address.csv"
+CUSTOMERS_FILE = "customers.csv"
 
 def load_customers(filter_query=''):
     try:
@@ -28,8 +29,6 @@ def load_customers(filter_query=''):
         return []
 
 def show_customers_list_window():
-    """Show customers list window with management options"""
-    # Create the layout
     layout = [
         [sg.T('Lista klientów', font=('Helvetica', 16))],
         [sg.T('Wyszukaj:'), 
@@ -74,7 +73,7 @@ def show_customers_list_window():
             window['-TABLE-'].update(table_data)
             
         if event == 'Dodaj klienta':
-            # show_add_customers_window()
+            show_register_customers_window()
             table_data = load_customers()
             window['-TABLE-'].update(table_data)
             
@@ -91,66 +90,73 @@ def show_customers_list_window():
                     continue
                     
                 row = table_data[selected_row]
-                if sg.popup_yes_no(f'Czy na pewno chcesz usunąć lek "{row[1]}" (ID: {row[0]})?') == 'Yes':
-                    remove_customer(row[0])
+                if sg.popup_yes_no(f'Czy na pewno chcesz usunąć klienta "{row[1]}" (ID: {row[0]})?') == 'Yes':
+                    remove_customer(CUSTOMERS_FILE,row[0])
+                    remove_customer(ADRESS_FILE,row[0])
+
                     sg.popup_ok(f'Klient "{row[1]}" (ID: {row[0]}) został usunięty')
-                    # table_data = load_drugs()
+                    table_data = load_customers()
                     window['-TABLE-'].update(table_data)
             except Exception as e:
-                sg.popup_error(f'Nie udało się usunąć leku: {e}')
+                sg.popup_error(f'Nie udało się usunąć klienta: {e}')
     
     window.close()
 
-def remove_customer(customer_id):
-    if not os.path.exists(CUSTOMERS_FILE):
-        raise FileNotFoundError("Plik z klientami nie istnieje.")
+
+#==========================================================================
+ #===================================================================================
+
+
+def show_register_customers_window():
+    """Show window for adding new drugs"""
+    layout = [
+        [sg.T('Dodaj klienta', font=('Helvetica', 16))],
+        [sg.T('Imie:'), sg.I(key='-NAME-')],
+        [sg.T('Email:'), sg.I(key='-EMAIL-')],
+        [sg.T('Telefon:'), sg.I(key='-PHONE-')],
+        [sg.T('Data urodzenia:'), sg.I(key='-DOB-')],
+        [sg.T('street:'), sg.I(key='-STREET-')],
+        [sg.T('Miasto:'), sg.I(key='-CITY-')],
+        [sg.T('Kraj:'), sg.I(key='-COUNTRY-')],
+        [sg.T('Płeć:'), 
+         sg.Combo(['Kobieta', 'Mężczyzna'], default_value='Kobieta', key='-GENDER-')],
+        [sg.B('Dodaj', button_color=('white', 'green')), 
+         sg.B('Anuluj', button_color=('white', 'gray'))]
+    ]
     
-    df = pd.read_csv(CUSTOMERS_FILE)
-    df = df[df["ID"].astype(str) != str(customer_id)]
-    df.to_csv(CUSTOMERS_FILE, index=False)
+    window = sg.Window('Dodaj klienta', layout, background_color='#2B2B2B')
     
-# def show_add_customers_window():
-#     """Show window for adding new drugs"""
-#     layout = [
-#         [sg.T('Dodaj lek', font=('Helvetica', 16))],
-#         [sg.T('Nazwa leku:'), sg.I(key='-DRUG-')],
-#         [sg.T('Na receptę:'), 
-#          sg.Combo(['YES', 'NO'], default_value='YES', key='-RECEPT-')],
-#         [sg.T('Liczba opakowań:'), 
-#          sg.I(key='-PACKAGES-', size=(10, 1))],
-#         [sg.B('Dodaj', button_color=('white', 'green')), 
-#          sg.B('Anuluj', button_color=('white', 'gray'))]
-#     ]
-    
-#     window = sg.Window('Dodaj lek', layout, background_color='#2B2B2B')
-    
-#     while True:
-#         event, values = window.read()
+    while True:
+        event, values = window.read()
         
-#         if event in (sg.WIN_CLOSED, 'Anuluj'):
-#             break
+        if event in (sg.WIN_CLOSED, 'Anuluj'):
+            break
             
-#         if event == 'Dodaj':
-#             drug_name = values['-DRUG-'].strip()
-#             recept = values['-RECEPT-']
-#             packages = values['-PACKAGES-'].strip()
+        if event == 'Dodaj':
+            name = values['-NAME-'].capitalize()
+            email = values['-EMAIL-'].capitalize()
+            date_of_birth = values['-DOB-']
+            gender = values['-GENDER-']
+            steet = values['-STREET-'].capitalize()
+            city = values['-CITY-'].capitalize()
+            country = values['-COUNTRY-'].capitalize()
+            raw_phone = values['-PHONE-']
+            if not raw_phone.isdigit() or len(raw_phone) != 9:
+               sg.popup_error('Numer telefonu musi mieć dokładnie 9 cyfr')
+               continue
+            phone = f"{raw_phone[:3]}-{raw_phone[3:6]}-{raw_phone[6:]}"
+ 
             
-#             if not all([drug_name, recept, packages]):
-#                 sg.popup_error('Uzupełnij wszystkie pola')
-#                 continue
+            if not all([name, email, phone, date_of_birth, gender, steet, city, country]):
+                sg.popup_error('Uzupełnij wszystkie pola')
+                continue
                 
-#             try:
-#                 packages = int(packages)
-#                 if packages <= 0:
-#                     raise ValueError("Liczba opakowań musi być większa od 0")
-                    
-#                 add_drug(drug_name, recept, packages)
-#                 sg.popup_ok('Lek został dodany')
-#                 break
-#             except ValueError as e:
-#                 sg.popup_error(f'Nieprawidłowa liczba opakowań: {e}')
-#             except Exception as e:
-#                 sg.popup_error(f'Błąd dodawania leku: {e}')
+            try:
+                add_customer(name,email,phone,date_of_birth,gender,steet,city,country)
+                sg.popup_ok('Klient został dodany')
+                break
+            except Exception as e:
+                sg.popup_error(f'Błąd dodawania klienta: {e}')
     
-#     window.close()
+    window.close()
 

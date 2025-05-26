@@ -1,13 +1,15 @@
 import PySimpleGUI as sg
-from customer import add_customer
-from drug_module import show_drug_list_window
-from customer_module import show_customers_list_window
+from ADMIN_drug_module import show_drug_list_window
+from ADMIN_customer_module import show_customers_list_window,show_register_customers_window
 
 
 CORRECT_PIN = "123"
 
+#==================================================================
+#=====================LOGIN WINDOW=========================
+
+
 def create_login_window():
-    """Create and show the login window"""
     layout = [
         [sg.T('System Apteki', font=('Helvetica', 20))],
         [sg.T('Wybierz typ logowania:', font=('Helvetica', 12))],
@@ -24,15 +26,18 @@ def create_login_window():
             return None
             
         if event == 'User':
-            window.close()
-            return 'User'
+            if show_register_customers_window():
+                window.close()
+                return 'User'
             
         if event == 'Admin':
-            window.close()
             if show_pin_window():
+                window.close()
                 return 'Admin'
     
-    window.close()
+
+#==================================================================
+#=====================PIN WINDOW=========================
 
 def show_pin_window():
     """Show PIN input window for admin login"""
@@ -58,7 +63,9 @@ def show_pin_window():
             else:
                 sg.popup_error('Nieprawidłowy PIN')
     
-    window.close()
+#==================================================================
+#=====================MAIN WINDOW=========================
+
 
 def create_main_window(user_type):
     """Create and show the main window"""
@@ -99,55 +106,8 @@ def create_main_window(user_type):
     
     window.close()
 
-# def show_registration_window():
-#     """Show customer registration window"""
-#     layout = [
-#         [sg.T('Rejestracja klienta', font=('Helvetica', 16))],
-#         [sg.T('Imię i nazwisko:'), sg.I(key='-NAME-')],
-#         [sg.T('Email:'), sg.I(key='-EMAIL-')],
-#         [sg.T('Telefon:'), sg.I(key='-PHONE-')],
-#         [sg.T('Gender:'), 
-#          sg.Combo(['MALE', 'FEMALE'], default_value='MALE', key='-GENDER-')],
-#         [sg.T('Date of birth:'), sg.I(key='-DATE_OF_BIRTH-')],
-#         [sg.T('Street:'), sg.I(key='-STREET-')],
-#         [sg.T('City:'), sg.I(key='-CITY-')],
-#         [sg.T('Country:'), sg.I(key='-COUNTRY-')],
-#         [sg.B('Zarejestruj', button_color=('white', 'green')), 
-#          sg.B('Anuluj', button_color=('white', 'gray'))]
-#     ]
-    
-#     window = sg.Window('Rejestracja', layout, background_color='#2B2B2B')
-    
-#     while True:
-#         event, values = window.read()
-        
-#         if event in (sg.WIN_CLOSED, 'Anuluj'):
-#             break
-            
-#         if event == 'Zarejestruj':
-#             name = values['-NAME-'].strip()
-#             email = values['-EMAIL-'].strip()
-#             phone = values['-PHONE-'].strip()
-#             gender = values['-GENDER-'].strip()
-#             date_of_birth = values['-DATE_OF_BIRTH-'].strip()
-#             street = values['-STREET-'].strip()
-#             city = values['-CITY-'].strip()
-#             country = values['-COUNTRY-'].strip()
 
-            
-#             if not all([name, email, phone,date_of_birth,gender]):
-#                 sg.popup_error('Uzupełnij wszystkie pola')
-#                 continue
-                
-#             try:
-#                 customer_id = add_customer(name, email, phone, date_of_birth,gender,street,city,country)
-#                 print(f'Klient został dodany z ID: {customer_id}')
-#                 sg.popup_ok(f'Klient został dodany z ID: {customer_id}')
-#                 break
-#             except Exception as e:
-#                 sg.popup_error(f'Nie udało się dodać klienta: {e}')
-    
-#     window.close()
+
 
 def main():
     while True:
