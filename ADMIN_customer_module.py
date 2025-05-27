@@ -14,6 +14,8 @@ def load_customers(filter_query=''):
         df = pd.read_csv(CUSTOMERS_FILE)
         if df.empty:
             return []
+        display_columns = ["ID","NAME","SURNAME","E-MAIL","PHONE","CREATED","AGE","GENDER"]
+        df = df[display_columns]
             
         if filter_query:
             query = filter_query.lower()
@@ -36,7 +38,7 @@ def show_customers_list_window():
          sg.B('Szukaj', button_color=('white', 'green')),
          sg.B('Pokaż wszystko', button_color=('white', 'green'))],
         [sg.Table(values=[], 
-                 headings=['ID','NAME','E-MAIL','PHONE','CREATED','UPDATED','DATE_OF_BIRTH','GENDER'],
+                 headings=["ID","NAME","SURNAME","E-MAIL","PHONE","CREATED","AGE","GENDER"],
                  key='-TABLE-',
                  auto_size_columns=True,
                  justification='center',
@@ -54,7 +56,7 @@ def show_customers_list_window():
     
     window = sg.Window('Lista klientow', layout, finalize=True, background_color='#2B2B2B')
     
-    # Initial load
+
     table_data = load_customers()
     window['-TABLE-'].update(table_data)
     
@@ -111,11 +113,15 @@ def show_register_customers_window():
     """Show window for adding new drugs"""
     layout = [
         [sg.T('Dodaj klienta', font=('Helvetica', 16))],
-        [sg.T('Imie:'), sg.I(key='-NAME-')],
         [sg.T('Email:'), sg.I(key='-EMAIL-')],
+        [sg.T('Nazwa użytkownika:'), sg.I(key='-USERNAME-')],
+        [sg.T('Hasło:'), sg.I(password_char='*',key='-PASSWORD-')],
+        [sg.T('Potwiedź hasło:'), sg.I(password_char='*',key='-CONFIRM-PASSWORD-')],
+        [sg.T('Imie:'), sg.I(key='-NAME-')],
+        [sg.T('Nazwisko:'), sg.I(key='-SRNAME-')],
         [sg.T('Telefon:'), sg.I(key='-PHONE-')],
         [sg.T('Data urodzenia:'), sg.I(key='-DOB-')],
-        [sg.T('street:'), sg.I(key='-STREET-')],
+        [sg.T('Ulica:'), sg.I(key='-STREET-')],
         [sg.T('Miasto:'), sg.I(key='-CITY-')],
         [sg.T('Kraj:'), sg.I(key='-COUNTRY-')],
         [sg.T('Płeć:'), 
@@ -131,28 +137,44 @@ def show_register_customers_window():
         
         if event in (sg.WIN_CLOSED, 'Anuluj'):
             break
-            
+        #Wypelnianie formularza   
         if event == 'Dodaj':
             name = values['-NAME-'].capitalize()
-            email = values['-EMAIL-'].capitalize()
+            surname = values['-SRNAME-'].capitalize()
+            user_name = values['-USERNAME-']
             date_of_birth = values['-DOB-']
             gender = values['-GENDER-']
-            steet = values['-STREET-'].capitalize()
+            street = values['-STREET-'].capitalize()
             city = values['-CITY-'].capitalize()
             country = values['-COUNTRY-'].capitalize()
             raw_phone = values['-PHONE-']
+
+            email = values['-EMAIL-']
+            if '@' not in email or '.' not in email:
+                sg.popup_error('Nieprawidłowy adres e-mail. Musi zawierać "@" oraz "."')
+                continue
+
             if not raw_phone.isdigit() or len(raw_phone) != 9:
                sg.popup_error('Numer telefonu musi mieć dokładnie 9 cyfr')
                continue
+
             phone = f"{raw_phone[:3]}-{raw_phone[3:6]}-{raw_phone[6:]}"
- 
+            password = values['-PASSWORD-']
+            if not 5 <= len(password) <= 10:
+                sg.popup_error('Hasło musi mieć od 5 do 10 znaków')
+                continue
+
+            conf_passowrd = values['-CONFIRM-PASSWORD-']
+            if password != conf_passowrd:
+               sg.popup_error('Hasła nie są takie same')
+               continue
             
-            if not all([name, email, phone, date_of_birth, gender, steet, city, country]):
+            if not all([user_name,name,surname, email, phone,date_of_birth,gender,street,city,country, password]):
                 sg.popup_error('Uzupełnij wszystkie pola')
                 continue
                 
             try:
-                add_customer(name,email,phone,date_of_birth,gender,steet,city,country)
+                add_customer(user_name,name,surname, email, phone,date_of_birth,gender,street,city,country, password)
                 sg.popup_ok('Klient został dodany')
                 break
             except Exception as e:

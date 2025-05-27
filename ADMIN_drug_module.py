@@ -16,6 +16,10 @@ def load_drugs(filter_query=''):
             
         header = df_raw.iloc[0, 0].split(",")
         df = df_raw.iloc[1:, 0].str.split(",", expand=True)
+                
+        if len(header) != df.shape[1]:
+            raise ValueError(f"Niezgodność liczby kolumn: nagłówki={len(header)}, dane={df.shape[1]}")
+        
         df.columns = header
         
         if filter_query:
@@ -40,7 +44,7 @@ def show_drug_list_window():
          sg.B('Szukaj', button_color=('white', 'green')),
          sg.B('Pokaż wszystko', button_color=('white', 'green'))],
         [sg.Table(values=[], 
-                 headings=['ID', 'Nazwa', 'Na receptę', 'Ilość', 'Data'],
+                 headings=['ID', 'Nazwa', 'Na receptę', 'Ilość', 'Data dodania','Numer recepty'],
                  key='-TABLE-',
                  auto_size_columns=True,
                  justification='center',
@@ -105,19 +109,21 @@ def show_drug_list_window():
     window.close()
 
 def show_add_drug_window():
-    """Show window for adding new drugs"""
+
     layout = [
         [sg.T('Dodaj lek', font=('Helvetica', 16))],
         [sg.T('Nazwa leku:'), sg.I(key='-DRUG-')],
         [sg.T('Na receptę:'), 
-         sg.Combo(['YES', 'NO'], default_value='YES', key='-RECEPT-')],
-        [sg.T('Liczba opakowań:'), 
-         sg.I(key='-PACKAGES-', size=(10, 1))],
+         sg.Combo(['YES', 'NO'], default_value='NO', key='-RECEPT-', enable_events=True)],
+        [sg.Column([
+            [sg.T('ID recepty:'), sg.I(key='-RECEPT-ID-', size=(10, 1))]
+        ], key='-RECEPT-ROW-', visible=False)],
+        [sg.T('Liczba opakowań:'), sg.I(key='-PACKAGES-', size=(10, 1))],
         [sg.B('Dodaj', button_color=('white', 'green')), 
          sg.B('Anuluj', button_color=('white', 'gray'))]
     ]
     
-    window = sg.Window('Dodaj lek', layout, background_color='#2B2B2B')
+    window = sg.Window('Dodaj lek', layout, background_color='#2B2B2B', finalize=True)
     
     while True:
         event, values = window.read()
@@ -125,21 +131,29 @@ def show_add_drug_window():
         if event in (sg.WIN_CLOSED, 'Anuluj'):
             break
             
+        if event == '-RECEPT-':
+            window['-RECEPT-ROW-'].update(visible=(values['-RECEPT-'] == 'YES'))
+
         if event == 'Dodaj':
             drug_name = values['-DRUG-'].strip()
             recept = values['-RECEPT-']
             packages = values['-PACKAGES-'].strip()
+            recept_id = values['-RECEPT-ID-'].strip() if recept == 'YES' else None
             
             if not all([drug_name, recept, packages]):
                 sg.popup_error('Uzupełnij wszystkie pola')
                 continue
-                
+            
+            if recept == 'YES' and not recept_id:
+                sg.popup_error('Podaj ID recepty dla leku')
+                continue
+
             try:
                 packages = int(packages)
                 if packages <= 0:
                     raise ValueError("Liczba opakowań musi być większa od 0")
                     
-                add_drug(drug_name, recept, packages)
+                add_drug(drug_name, recept, packages, recept_id)
                 sg.popup_ok('Lek został dodany')
                 break
             except ValueError as e:
