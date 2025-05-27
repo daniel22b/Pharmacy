@@ -26,7 +26,9 @@ def create_login_window():
             return None
             
         if event == 'User':
-            if show_register_customers_window():
+            if 1==True:
+            # if show_register_customers_window():
+
                 window.close()
                 return 'User'
             
@@ -79,6 +81,11 @@ def create_main_window(user_type):
             [sg.B('Lista klientów', size=(20, 2), button_color=('white', 'green'))],
             [sg.B('Lista leków', size=(20, 2), button_color=('white', 'green'))]
         ])
+    elif user_type == 'User':
+        layout.extend([
+            [sg.B('Zaloguj się', size=(20, 2), button_color=('white', 'green'))],
+            [sg.B('Zarejestruj się', size=(20, 2), button_color=('white', 'green'))]
+        ])
     
     layout.append([sg.B('Wyloguj się', size=(20, 2), button_color=('white', 'red'))])
     
@@ -93,7 +100,7 @@ def create_main_window(user_type):
         if event == 'Wyloguj się':
             window.close()
             return True
-            
+
         if event == 'Lista klientów':
             window.hide()
             show_customers_list_window()
@@ -103,11 +110,14 @@ def create_main_window(user_type):
             window.hide()
             show_drug_list_window()
             window.un_hide()
+
+        if event == 'Zaloguj się':
+            sg.popup_ok("Zalogowano (funkcja do uzupełnienia)")
+        
+        if event == 'Zarejestruj się':
+            show_register_customers_window()
     
     window.close()
-
-
-
 
 def main():
     while True:
