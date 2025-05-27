@@ -56,14 +56,13 @@ def show_customers_list_window():
     
     window = sg.Window('Lista klientow', layout, finalize=True, background_color='#2B2B2B')
     
-
     table_data = load_customers()
     window['-TABLE-'].update(table_data)
     
     while True:
         event, values = window.read()
         
-        if event in (sg.WIN_CLOSED, 'Zamknij'):
+        if event is None or event == 'Zamknij':
             break
             
         if event == 'Szukaj':
@@ -135,9 +134,9 @@ def show_register_customers_window():
     while True:
         event, values = window.read()
         
-        if event in (sg.WIN_CLOSED, 'Anuluj'):
+        if event is None or event == 'Anuluj':
             break
-        #Wypelnianie formularza   
+            
         if event == 'Dodaj':
             name = values['-NAME-'].capitalize()
             surname = values['-SRNAME-'].capitalize()
@@ -182,3 +181,13 @@ def show_register_customers_window():
     
     window.close()
 
+def validate_user_login(username, password):
+    import csv
+    if not os.path.exists(CUSTOMERS_FILE):
+        return False
+    with open(CUSTOMERS_FILE, newline='', encoding='utf-8') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            if row['USER_NAME'] == username and row['PASSWORD'] == password:
+                return True
+    return False
