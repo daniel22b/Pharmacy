@@ -69,7 +69,7 @@ def show_drug_list_window():
     while True:
         event, values = window.read()
         
-        if event in (sg.WIN_CLOSED, 'Zamknij'):
+        if event is None or event == 'Zamknij':
             break
             
         if event == 'Szukaj':
@@ -109,7 +109,6 @@ def show_drug_list_window():
     window.close()
 
 def show_add_drug_window():
-
     layout = [
         [sg.T('Dodaj lek', font=('Helvetica', 16))],
         [sg.T('Nazwa leku:'), sg.I(key='-DRUG-')],
@@ -128,7 +127,7 @@ def show_add_drug_window():
     while True:
         event, values = window.read()
         
-        if event in (sg.WIN_CLOSED, 'Anuluj'):
+        if event is None or event == 'Anuluj':
             break
             
         if event == '-RECEPT-':

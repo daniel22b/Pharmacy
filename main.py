@@ -1,72 +1,9 @@
 import PySimpleGUI as sg
 from ADMIN_drug_module import show_drug_list_window
-from ADMIN_customer_module import show_customers_list_window,show_register_customers_window
+from ADMIN_customer_module import show_customers_list_window,show_register_customers_window,validate_user_login
 
-
+CORRECT_UN = "123"
 CORRECT_PIN = "123"
-
-#==================================================================
-#=====================LOGIN WINDOW=========================
-
-
-def create_login_window():
-    layout = [
-        [sg.T('System Apteki', font=('Helvetica', 20))],
-        [sg.T('Wybierz typ logowania:', font=('Helvetica', 12))],
-        [sg.B('User', size=(20, 2), button_color=('white', 'green'))],
-        [sg.B('Admin', size=(20, 2), button_color=('white', 'green'))]
-    ]
-    
-    window = sg.Window('Logowanie', layout, element_justification='center', background_color='#2B2B2B')
-    
-    while True:
-        event, values = window.read()
-        
-        if event == sg.WIN_CLOSED:
-            return None
-            
-        if event == 'User':
-            if 1==True:
-            # if show_register_customers_window():
-
-                window.close()
-                return 'User'
-            
-        if event == 'Admin':
-            if show_pin_window():
-                window.close()
-                return 'Admin'
-    
-
-#==================================================================
-#=====================PIN WINDOW=========================
-
-def show_pin_window():
-    """Show PIN input window for admin login"""
-    layout = [
-        [sg.T('Wprowadź PIN:')],
-        [sg.I(password_char='*', key='-PIN-')],
-        [sg.B('Potwierdź', button_color=('white', 'green'))]
-    ]
-    
-    window = sg.Window('PIN', layout, element_justification='center', background_color='#2B2B2B')
-    
-    while True:
-        event, values = window.read()
-        
-        if event == sg.WIN_CLOSED:
-            window.close()
-            return False
-            
-        if event == 'Potwierdź':
-            if values['-PIN-'] == CORRECT_PIN:
-                window.close()
-                return True
-            else:
-                sg.popup_error('Nieprawidłowy PIN')
-    
-#==================================================================
-#=====================MAIN WINDOW=========================
 
 
 def create_main_window(user_type):
@@ -78,7 +15,7 @@ def create_main_window(user_type):
     
     if user_type == 'Admin':
         layout.extend([
-            [sg.B('Lista klientów', size=(20, 2), button_color=('white', 'green'))],
+            [sg.Button('Lista klientów', size=(20, 2), button_color=('white', 'green'))],
             [sg.B('Lista leków', size=(20, 2), button_color=('white', 'green'))]
         ])
     elif user_type == 'User':
@@ -94,10 +31,7 @@ def create_main_window(user_type):
     while True:
         event, values = window.read()
         
-        if event == sg.WIN_CLOSED:
-            break
-            
-        if event == 'Wyloguj się':
+        if event is None or event == 'Wyloguj się':
             window.close()
             return True
 
@@ -119,14 +53,64 @@ def create_main_window(user_type):
     
     window.close()
 
+
+
+
+def start_window():
+    layout = [
+        
+        [sg.B('Zaloguj się', size=(20, 2), button_color=('white', 'green'))],
+        [sg.B('Zarejestruj się', size=(20, 2), button_color=('white', 'blue'))],
+        [sg.B('Wyjdź', size=(20, 2), button_color=('white', 'red'))]
+    ]
+    window = sg.Window('Witamy w systemie apteki', layout, background_color='#2B2B2B')
+    return window
+def login_window():
+    layout = [
+        [sg.Text('Nazwa użytkownika:'), sg.Input(key='-UNAME-')],
+        [sg.Text('Hasło:'), sg.Input(key='-PASS-', password_char='*')],
+        [sg.B('Zaloguj', button_color=('white', 'green')), sg.B('Anuluj')]
+    ]
+    return sg.Window('Logowanie', layout, background_color='#2B2B2B')
+
+
 def main():
     while True:
-        user_type = create_login_window()
-        if user_type is None:
-            break
-            
-        if not create_main_window(user_type):
-            break
+        window = start_window()
+        while True:
+            event, _ = window.read()
+            if event is None or event == 'Wyjdź':
+                window.close()
+                return
+
+            if event == 'Zarejestruj się':
+                window.close()
+                show_register_customers_window()
+                break
+
+            if event == 'Zaloguj się':
+                window.close()
+                login = login_window()
+                while True:
+                    event, values = login.read()
+                    if event is None or event == 'Anuluj':
+                        login.close()
+                        break
+
+                    if event == 'Zaloguj':
+                        uname = values['-UNAME-']
+                        passwd = values['-PASS-']
+                        if uname == CORRECT_UN and passwd == CORRECT_PIN:
+                            login.close()
+                            create_main_window('Admin')
+                            break
+                        elif validate_user_login(uname, passwd):
+                            login.close()
+                            sg.popup_ok('Zalogowano jako użytkownik')
+                            create_main_window('User')
+                            break
+                        else:
+                            sg.popup_error('Nieprawidłowa nazwa użytkownika lub hasło')
 
 if __name__ == '__main__':
     main()

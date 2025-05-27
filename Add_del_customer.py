@@ -8,7 +8,6 @@ CUSTOMER_FILE = "customers.csv"
 ADRESS_FILE = "address.csv"
 
 
-
 def add_customer(user_name, name, surname, email, phone, date_of_birth, gender, street, city, country, password):
 
     def check_duplicates(email,phone):
