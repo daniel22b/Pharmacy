@@ -31,8 +31,7 @@ def add_customer(user_name, name, surname, email, phone, date_of_birth, gender, 
     def calculate_age(date_of_birth_str):
         birth_date = datetime.strptime(date_of_birth_str, "%d.%m.%Y").date()
         today = datetime.today().date()
-        age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
-        return age
+        age = today.year - birth_date.year 
 
     if not os.path.exists(CUSTOMER_FILE):
         with open(CUSTOMER_FILE, 'w', newline='', encoding='utf-8') as f:
@@ -49,7 +48,7 @@ def add_customer(user_name, name, surname, email, phone, date_of_birth, gender, 
             writer = csv.writer(f)
             writer.writerow(row)
 
-    save_to_csv(CUSTOMER_FILE, [customer_id, user_name, name, surname, email, phone, now, now, age, date_of_birth, gender, password])
+    save_to_csv(CUSTOMER_FILE, [customer_id, user_name, name, surname, email, phone, now, now, date_of_birth, age,  gender, password])
     save_to_csv(ADRESS_FILE, [customer_id, street, city, country])
 
 def remove_customer(file_path,customer_id):
