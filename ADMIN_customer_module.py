@@ -143,14 +143,15 @@ def show_register_customers_window():
             user_name = values['-USERNAME-']
             date_of_birth = values['-DOB-']
             gender = values['-GENDER-']
-            street = values['-STREET-'].capitalize()
             city = values['-CITY-'].capitalize()
             country = values['-COUNTRY-'].capitalize()
             raw_phone = values['-PHONE-']
+            street = "Ul. " + values['-STREET-'].strip()
+          
 
             email = values['-EMAIL-']
             if '@' not in email or '.' not in email:
-                sg.popup_error('Nieprawidłowy adres e-mail. Musi zawierać "@" oraz "."')
+                sg.popup_error('Nieprawidłowy format e-mail.')
                 continue
 
             if not raw_phone.isdigit() or len(raw_phone) != 9:
@@ -191,3 +192,5 @@ def validate_user_login(username, password):
             if row['USER_NAME'] == username and row['PASSWORD'] == password:
                 return True
     return False
+
+

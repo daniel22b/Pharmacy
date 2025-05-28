@@ -15,9 +15,8 @@ def load_drug_data(file_path=FILE_PATH):
     df["ID"] = df["ID"].astype(int)
     df["NO_PACKAGES_AVAILABLE"] = df["NO_PACKAGES_AVAILABLE"].astype(int)
     df["DATE"] = pd.to_datetime(df["DATE"])
-    df["RECEPT_ID"] = df["RECEPT_ID"].apply(lambda x: int(x) if str(x).isdigit() else None)
+    df["RECEPT_ID"] = df["RECEPT_ID"].fillna("").astype(str)
 
-    
 
     return df, header_row
 
@@ -31,12 +30,16 @@ def save_drug_data(df, header_row, file_path=FILE_PATH):
     final_df.to_excel(file_path, index=False, header=False)
 
 def add_drug(drug, on_recept, no_packages,recept_id=None):
+    
     df, header_row = load_drug_data()
-
-    new_id = df["ID"].max() + 1
+    if recept_id is not None and str(recept_id).strip() != "":
+        if recept_id in df["RECEPT_ID"].astype(str).values:
+            raise ValueError(f"RECEPT_ID '{recept_id}' jest już w bazie. Podaj inny.")
+         
+    new_id = df["ID"].max() + 1 if not df.empty else 1
     today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    new_row = [str(new_id), drug.upper(), on_recept, str(no_packages), today,str(recept_id) if recept_id else ""]
+    new_row = [str(new_id), drug.upper(), on_recept, str(no_packages), today, str(recept_id) if recept_id else ""]
     df = pd.concat([df, pd.DataFrame([new_row], columns=df.columns)], ignore_index=True)
 
     save_drug_data(df, header_row)

@@ -55,7 +55,6 @@ def create_main_window(user_type):
 
 
 
-
 def start_window():
     layout = [
         
@@ -84,12 +83,11 @@ def main():
                 return
 
             if event == 'Zarejestruj się':
-                window.close()
                 show_register_customers_window()
+                window.close()
                 break
 
             if event == 'Zaloguj się':
-                window.close()
                 login = login_window()
                 while True:
                     event, values = login.read()
@@ -114,3 +112,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
