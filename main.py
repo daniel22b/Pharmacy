@@ -2,8 +2,8 @@ import PySimpleGUI as sg
 from ADMIN_drug_module import show_drug_list_window
 from ADMIN_customer_module import show_customers_list_window,show_register_customers_window,validate_user_login
 
-CORRECT_UN = "123"
-CORRECT_PIN = "123"
+CORRECT_UN = ""
+CORRECT_PIN = ""
 
 
 def create_main_window(user_type):
@@ -112,4 +112,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
