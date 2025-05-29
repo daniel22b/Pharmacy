@@ -193,4 +193,3 @@ def validate_user_login(username, password):
                 return True
     return False
 
-
