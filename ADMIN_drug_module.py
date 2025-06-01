@@ -36,7 +36,7 @@ def load_drugs(filter_query=''):
         sg.popup_error(f'Nie można wczytać danych: {e}')
         return []
 
-def show_drug_list_window():
+def show_drug_list_window(user_mode=False):
     """Show drug list window with management options"""
     # Create the layout
     layout = [
@@ -57,9 +57,12 @@ def show_drug_list_window():
                  header_text_color='white',
                  select_mode=sg.TABLE_SELECT_MODE_BROWSE,
                  enable_click_events=True)],
-        [sg.B('Dodaj lek', button_color=('white', 'green')),
-         sg.B('Edytuj', button_color=('white', 'blue')), 
-         sg.B('Usuń', button_color=('white', 'red')),
+        [
+            *([
+                  sg.B('Dodaj lek', button_color=('white', 'green')),
+                  sg.B('Edytuj', button_color=('white', 'blue')),
+                  sg.B('Usuń', button_color=('white', 'red')),
+              ] if not user_mode else []),
          sg.B('Zamów', button_color=('white', 'purple')),
          sg.B('Zamknij', button_color=('white', 'gray'))]
          
@@ -85,12 +88,12 @@ def show_drug_list_window():
             table_data = load_drugs()
             window['-TABLE-'].update(table_data)
             
-        if event == 'Dodaj lek':
+        if event == 'Dodaj lek' and not user_mode:
             show_add_drug_window()
             table_data = load_drugs()
             window['-TABLE-'].update(table_data)
 
-        if event == 'Edytuj':
+        if event == 'Edytuj' and not user_mode:
             selected = values['-TABLE-']
             if not selected:
                 sg.popup_error('Wybierz rekord')
@@ -111,7 +114,7 @@ def show_drug_list_window():
             window['-TABLE-'].update(table_data)
 
 
-        if event == 'Usuń':
+        if event == 'Usuń' and not user_mode:
             selected = values['-TABLE-']
             if not selected:
                 sg.popup_error('Wybierz rekord')
