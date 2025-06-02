@@ -1,0 +1,3 @@
+Klient ID: None
+Zakupy:
+2025-06-02 22:04:47 - IBUPROM, ilość: 1

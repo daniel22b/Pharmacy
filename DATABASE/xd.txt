@@ -1,0 +1,5 @@
+Klient ID: xd
+Zakupy:
+2025-06-02 22:02:26 - RWERW, ilość: 1
+2025-06-02 22:02:54 - RWERW, ilość: 2
+2025-06-02 22:03:10 - NO-SPA, ilość: 3
