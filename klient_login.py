@@ -1,8 +1,7 @@
 import PySimpleGUI as sg
 from ADMIN_drug_module import show_drug_list_window
 
-
-def show_user_main_window():
+def show_user_main_window(client_id):
     layout = [
         [sg.Text("Witaj, użytkowniku!", font=('Helvetica', 16))],
         [sg.Button("Lista leków", button_color=('white', 'green'))],
@@ -17,7 +16,7 @@ def show_user_main_window():
             break
         elif event == "Lista leków":
             window.hide()
-            show_drug_list_window(user_mode=True)
+            show_drug_list_window(user_mode=True, client_id=client_id)
             window.un_hide()
 
     window.close()

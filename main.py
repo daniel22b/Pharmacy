@@ -1,6 +1,6 @@
 import PySimpleGUI as sg
 from ADMIN_drug_module import show_drug_list_window
-from ADMIN_customer_module import show_customers_list_window,show_register_customers_window,validate_user_login
+from ADMIN_customer_module import show_customers_list_window, show_register_customers_window, validate_user_login
 from klient_login import show_user_main_window
 
 CORRECT_UN = ""
@@ -58,7 +58,7 @@ def create_main_window(user_type):
 
 def start_window():
     layout = [
-        
+
         [sg.B('Zaloguj się', size=(20, 2), button_color=('white', 'green'))],
         [sg.B('Zarejestruj się', size=(20, 2), button_color=('white', 'blue'))],
         [sg.B('Wyjdź', size=(20, 2), button_color=('white', 'red'))]
@@ -105,7 +105,7 @@ def main():
                             break
                         elif validate_user_login(uname, passwd):
                             login.close()
-                            show_user_main_window()
+                            show_user_main_window(uname)
                             break
                         else:
                             sg.popup_error('Nieprawidłowa nazwa użytkownika lub hasło')

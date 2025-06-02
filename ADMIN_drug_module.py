@@ -2,6 +2,7 @@ import PySimpleGUI as sg
 import os
 import pandas as pd
 from Add_del_drug import DrugDatabase
+from add_purchase_to_customer_file import add_purchase_to_customer_file
 DRUGS_FILE = "drugs.xlsx"
 
 db = DrugDatabase()
@@ -36,7 +37,7 @@ def load_drugs(filter_query=''):
         sg.popup_error(f'Nie można wczytać danych: {e}')
         return []
 
-def show_drug_list_window(user_mode=False):
+def show_drug_list_window(user_mode=False, client_id=None):
     """Show drug list window with management options"""
     # Create the layout
     layout = [
@@ -109,7 +110,7 @@ def show_drug_list_window(user_mode=False):
                 sg.popup_error('Wybierz rekord')
                 continue
             row = table_data[selected[0]]
-            order_drug_window(row)
+            order_drug_window(row, client_id)
             table_data = load_drugs()
             window['-TABLE-'].update(table_data)
 
@@ -238,7 +239,7 @@ def show_edit_drug_window(row):
                 sg.popup_error(f'Błąd edycji: {e}')
     window.close()
 
-def order_drug_window(row):
+def order_drug_window(row, client_id):
     drug_id, drug_name, recept, packages, created, recept_id = row
 
     layout = [
@@ -262,8 +263,10 @@ def order_drug_window(row):
                 continue
 
             try:
-                db.order_drug(drug_id, int(qty))
-                sg.popup_ok(f'Zamówiono {qty} sztuk leku "{drug_name}"')
+                qty_int = int(qty)
+                db.order_drug(drug_id, qty_int)
+                add_purchase_to_customer_file(client_id, drug_name, int(qty))
+                sg.popup_ok(f'Zamówiono {qty_int} sztuk leku "{drug_name}"')
                 break
             except Exception as e:
                 sg.popup_error(f'Błąd zamówienia: {e}')

@@ -9,6 +9,14 @@ ADRESS_FILE = "address.csv"
 
 
 def add_customer(user_name, name, surname, email, phone, date_of_birth, gender, street, city, country, password):
+    def create_client_file(client_id):
+        folder = "DATABASE"
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+        filepath = os.path.join(folder, f"{client_id}.txt")
+        if not os.path.exists(filepath):
+            with open(filepath, "w", encoding="utf-8") as f:
+                f.write(f"Klient ID: {client_id}\nZakupy:\n")
 
     def check_duplicates(email,phone):
         if not os.path.exists(CUSTOMER_FILE):
