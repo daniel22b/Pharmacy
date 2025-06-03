@@ -19,7 +19,7 @@ class DrugDatabase:
         df.columns = header_cols
         df["ID"] = df["ID"].astype(int)
         df["NO_PACKAGES_AVAILABLE"] = df["NO_PACKAGES_AVAILABLE"].astype(int)
-        df["DATE"] = pd.to_datetime(df["DATE"])
+        df["DATE"] = pd.to_datetime(df["DATE"], format='mixed')
         df["RECEPT_ID"] = df["RECEPT_ID"].fillna("").astype(str)
 
         self.df = df
