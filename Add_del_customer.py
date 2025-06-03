@@ -9,6 +9,7 @@ ADRESS_FILE = "address.csv"
 
 
 def add_customer(user_name, name, surname, email, phone, date_of_birth, gender, street, city, country, password):
+
     def create_client_file(client_id):
         folder = "DATABASE"
         if not os.path.exists(folder):
@@ -36,10 +37,11 @@ def add_customer(user_name, name, surname, email, phone, date_of_birth, gender, 
     def generate_id():
         return ''.join(str(random.randint(0, 9)) for _ in range(4))
 
-    def calculate_age(date_of_birth_str):
-        birth_date = datetime.strptime(date_of_birth_str, "%d.%m.%Y").date()
+    def calculate_age(date_of_birth):
+        birth_date = datetime.strptime(date_of_birth, "%d.%m.%Y").date()
         today = datetime.today().date()
-        age = today.year - birth_date.year 
+        age = today.year - birth_date.year
+        return age  
 
     if not os.path.exists(CUSTOMER_FILE):
         with open(CUSTOMER_FILE, 'w', newline='', encoding='utf-8') as f:
@@ -48,7 +50,8 @@ def add_customer(user_name, name, surname, email, phone, date_of_birth, gender, 
 
     now = datetime.now().strftime("%d.%m.%Y")
     customer_id = generate_id()
-    age = calculate_age(date_of_birth)
+    age = int(calculate_age(date_of_birth))
+    
 
 
     def save_to_csv(filepath, row):
