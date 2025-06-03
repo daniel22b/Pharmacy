@@ -59,7 +59,7 @@ def add_customer(user_name, name, surname, email, phone, date_of_birth, gender, 
             writer = csv.writer(f)
             writer.writerow(row)
 
-    save_to_csv(CUSTOMER_FILE, [customer_id, user_name, name, surname, email, phone, now, now, date_of_birth, age,  gender, password])
+    save_to_csv(CUSTOMER_FILE, [customer_id, user_name, name, surname, email, phone, now, now, date_of_birth,age,  gender, password])
     save_to_csv(ADRESS_FILE, [customer_id, street, city, country])
 
 def remove_customer(file_path,customer_id):
