@@ -7,23 +7,14 @@ CORRECT_UN = ""
 CORRECT_PIN = ""
 
 
-def create_main_window(user_type):
+def create_admin_window():
     """Create and show the main window"""
     layout = [
-        [sg.T(f'Witaj, {"Administratorze" if user_type == "Admin" else "użytkowniku"}!', 
+        [sg.T("Witaj,Administratorze", 
               font=('Helvetica', 16))],
+        [sg.Button('Lista klientów', size=(20, 2), button_color=('white', 'green'))],
+        [sg.B('Lista leków', size=(20, 2), button_color=('white', 'green'))]
     ]
-    
-    if user_type == 'Admin':
-        layout.extend([
-            [sg.Button('Lista klientów', size=(20, 2), button_color=('white', 'green'))],
-            [sg.B('Lista leków', size=(20, 2), button_color=('white', 'green'))]
-        ])
-    elif user_type == 'User':
-        layout.extend([
-            [sg.B('Zaloguj się', size=(20, 2), button_color=('white', 'green'))],
-            [sg.B('Zarejestruj się', size=(20, 2), button_color=('white', 'green'))]
-        ])
     
     layout.append([sg.B('Wyloguj się', size=(20, 2), button_color=('white', 'red'))])
     
@@ -34,6 +25,7 @@ def create_main_window(user_type):
         
         if event is None or event == 'Wyloguj się':
             window.close()
+
             return True
 
         if event == 'Lista klientów':
@@ -45,15 +37,6 @@ def create_main_window(user_type):
             window.hide()
             show_drug_list_window()
             window.un_hide()
-
-        if event == 'Zaloguj się':
-            sg.popup_ok("Zalogowano (funkcja do uzupełnienia)")
-        
-        if event == 'Zarejestruj się':
-            show_register_customers_window()
-    
-    window.close()
-
 
 
 def start_window():
@@ -101,14 +84,18 @@ def main():
                         passwd = values['-PASS-']
                         if uname == CORRECT_UN and passwd == CORRECT_PIN:
                             login.close()
-                            create_main_window('Admin')
+                            window.close()
+                            create_admin_window()
+
                             break
                         elif validate_user_login(uname, passwd):
                             login.close()
+                            window.close()
                             show_user_main_window(uname)
+
                             break
                         else:
                             sg.popup_error('Nieprawidłowa nazwa użytkownika lub hasło')
-
+                break                    
 if __name__ == '__main__':
     main()

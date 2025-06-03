@@ -28,7 +28,7 @@ def load_drugs(filter_query=''):
         if filter_query:
             query = filter_query.lower()
             df = df[df.apply(
-                lambda row: query in str(row["ID"]).lower() or query in str(row["DRUG"]).lower(),
+                lambda row: query in str(row["ID"]) or query in str(row["DRUG"]).lower(),
                 axis=1
             )]
         
@@ -230,7 +230,6 @@ def show_edit_drug_window(row):
                 if packages <= 0:
                     raise ValueError("Liczba opakowań musi być większa od 0")
 
-                # Usuń stary i dodaj zaktualizowany (prosty sposób aktualizacji)
                 db.remove_drug(drug_id)
                 db.add_drug(drug_name, recept, packages, recept_id)
                 sg.popup_ok('Dane leku zostały zaktualizowane')
