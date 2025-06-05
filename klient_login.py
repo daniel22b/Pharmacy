@@ -1,5 +1,5 @@
 import PySimpleGUI as sg
-from ADMIN_drug_module import show_drug_list_window
+from USER_drug_module import show_user_drug_window  # Nowy import
 
 def show_user_main_window(client_id):
     layout = [
@@ -16,7 +16,7 @@ def show_user_main_window(client_id):
             break
         elif event == "Lista leków":
             window.hide()
-            show_drug_list_window(user_mode=True, client_id=client_id)
+            show_user_drug_window(client_id)  # Nowe wywołanie z koszykiem
             window.un_hide()
 
     window.close()
