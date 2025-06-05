@@ -47,7 +47,7 @@ def show_drug_list_window(user_mode=False, client_id=None):
          sg.B('Szukaj', button_color=('white', 'green')),
          sg.B('Pokaż wszystko', button_color=('white', 'green'))],
         [sg.Table(values=[], 
-                 headings=['ID', 'Nazwa', 'Na receptę', 'Ilość', 'Data dodania','Numer recepty'],
+                 headings=['ID', 'Nazwa', 'Na receptę', 'Ilość', 'Data dodania','Numer recepty','Cena'],
                  key='-TABLE-',
                  auto_size_columns=True,
                  justification='center',
@@ -141,6 +141,7 @@ def show_add_drug_window():
             [sg.T('ID recepty:'), sg.I(key='-RECEPT-ID-', size=(10, 1))]
         ], key='-RECEPT-ROW-', visible=False)],
         [sg.T('Liczba opakowań:'), sg.I(key='-PACKAGES-', size=(10, 1))],
+        [sg.T('Cena:'), sg.I(key='-PRICE-', size=(10,1))],
         [sg.B('Dodaj', button_color=('white', 'green')), 
          sg.B('Anuluj', button_color=('white', 'gray'))]
     ]
@@ -161,8 +162,8 @@ def show_add_drug_window():
             recept = values['-RECEPT-']
             packages = values['-PACKAGES-'].strip()
             recept_id = values['-RECEPT-ID-'].strip() if recept == 'YES' else None
-            
-            if not all([drug_name, recept, packages]):
+            price = values['-PRICE-'].strip()
+            if not all([drug_name, recept, packages,price]):
                 sg.popup_error('Uzupełnij wszystkie pola')
                 continue
             
@@ -175,7 +176,7 @@ def show_add_drug_window():
                 if packages <= 0:
                     raise ValueError("Liczba opakowań musi być większa od 0")
                     
-                db.add_drug(drug_name, recept, packages, recept_id)
+                db.add_drug(drug_name, recept, packages, recept_id,price)
                 sg.popup_ok('Lek został dodany')
                 break
             except ValueError as e:
@@ -186,7 +187,7 @@ def show_add_drug_window():
     window.close()
 
 def show_edit_drug_window(row):
-    drug_id, drug_name, recept, packages,created, recept_id = row
+    drug_id, drug_name, recept, packages,created, recept_id,price = row
     
     layout = [
         [sg.T('Edytuj lek', font=('Helvetica', 16))],
@@ -197,6 +198,7 @@ def show_edit_drug_window(row):
             [sg.T('ID recepty:'), sg.I(recept_id if recept_id != 'None' else '', key='-RECEPT-ID-')]
         ], key='-RECEPT-ROW-', visible=(recept == 'YES'))],
         [sg.T('Liczba opakowań:'), sg.I(packages, key='-PACKAGES-')],
+        [sg.T('Cena:'), sg.I(price, key='-PRICE-', size=(10,1))],
         [sg.B('Zapisz', button_color=('white', 'green')), 
          sg.B('Anuluj', button_color=('white', 'gray'))]
     ]
@@ -216,8 +218,8 @@ def show_edit_drug_window(row):
             recept = values['-RECEPT-']
             packages = values['-PACKAGES-'].strip()
             recept_id = values['-RECEPT-ID-'].strip() if recept == 'YES' else None
-            
-            if not all([drug_name, recept, packages]):
+            price = values['-PRICE-'].strip()
+            if not all([drug_name, recept, packages,price]):
                 sg.popup_error('Uzupełnij wszystkie pola')
                 continue
 
@@ -231,7 +233,7 @@ def show_edit_drug_window(row):
                     raise ValueError("Liczba opakowań musi być większa od 0")
 
                 db.remove_drug(drug_id)
-                db.add_drug(drug_name, recept, packages, recept_id)
+                db.add_drug(drug_name, recept, packages, recept_id,price)
                 sg.popup_ok('Dane leku zostały zaktualizowane')
                 break
             except Exception as e:
@@ -239,7 +241,7 @@ def show_edit_drug_window(row):
     window.close()
 
 def order_drug_window(row, client_id):
-    drug_id, drug_name, recept, packages, created, recept_id = row
+    drug_id, drug_name, recept, packages, created, recept_id,price = row
 
     layout = [
         [sg.T(f'Zamów lek: {drug_name}', font=('Helvetica', 16))],

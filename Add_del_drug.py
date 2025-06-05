@@ -21,6 +21,7 @@ class DrugDatabase:
         df["NO_PACKAGES_AVAILABLE"] = df["NO_PACKAGES_AVAILABLE"].astype(int)
         df["DATE"] = pd.to_datetime(df["DATE"], format='mixed')
         df["RECEPT_ID"] = df["RECEPT_ID"].fillna("").astype(str)
+        df["PRICE"] = df["PRICE"].astype(float)
 
         self.df = df
 
@@ -32,7 +33,7 @@ class DrugDatabase:
         final_df = pd.concat([final_df, new_data.to_frame()], ignore_index=True)
         final_df.to_excel(self.file_path, index=False, header=False)
 
-    def add_drug(self, drug, on_recept, no_packages, recept_id=None):
+    def add_drug(self, drug, on_recept, no_packages, recept_id=None,price=0.00):
         if recept_id is not None and str(recept_id).strip() != "":
             if recept_id in self.df["RECEPT_ID"].astype(str).values:
                 raise ValueError(f"RECEPT_ID '{recept_id}' jest już w bazie. Podaj inny.")
@@ -45,8 +46,10 @@ class DrugDatabase:
         "DRUG": drug.upper(),
         "DATE": today,
         "ON_RECEPT": on_recept,
-        "RECEPT_ID": str(recept_id) if recept_id else "",
-        "NO_PACKAGES_AVAILABLE": int(no_packages)
+        "RECEPT_ID": str(recept_id) if recept_id else "-----",
+        "NO_PACKAGES_AVAILABLE": int(no_packages),
+        "PRICE": f"{float(price):.2f}"
+
 }
         self.df = pd.concat([self.df, pd.DataFrame([new_row])], ignore_index=True)
         self.save_data()
