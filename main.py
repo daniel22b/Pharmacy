@@ -2,6 +2,7 @@ import PySimpleGUI as sg
 from ADMIN_drug_module import show_drug_list_window
 from ADMIN_customer_module import show_customers_list_window, show_register_customers_window, validate_user_login
 from klient_login import show_user_main_window
+from Agent import agent_ai
 
 CORRECT_UN = ""
 CORRECT_PIN = ""
@@ -13,7 +14,8 @@ def create_admin_window():
         [sg.T("Witaj,Administratorze", 
               font=('Helvetica', 16))],
         [sg.Button('Lista klientów', size=(20, 2), button_color=('white', 'green'))],
-        [sg.B('Lista leków', size=(20, 2), button_color=('white', 'green'))]
+        [sg.B('Lista leków', size=(20, 2), button_color=('white', 'green'))],
+
     ]
     
     layout.append([sg.B('Wyloguj się', size=(20, 2), button_color=('white', 'red'))])
@@ -44,7 +46,8 @@ def start_window():
 
         [sg.B('Zaloguj się', size=(20, 2), button_color=('white', 'green'))],
         [sg.B('Zarejestruj się', size=(20, 2), button_color=('white', 'blue'))],
-        [sg.B('Wyjdź', size=(20, 2), button_color=('white', 'red'))]
+        [sg.B('Wyjdź', size=(20, 2), button_color=('white', 'red'))],
+        [sg.Button("Agent")]
     ]
     window = sg.Window('Witamy w systemie apteki', layout, background_color='#2B2B2B')
     return window
@@ -70,6 +73,9 @@ def main():
                 show_register_customers_window()
                 window.close()
                 break
+            if event == "Agent":
+                agent_ai()
+
 
             if event == 'Zaloguj się':
                 login = login_window()
