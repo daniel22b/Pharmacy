@@ -1,7 +1,7 @@
 import PySimpleGUI as sg
 import pandas as pd
 from openai import OpenAI
-
+from dekorator import count_agent_usage
 client = OpenAI(api_key="")
 
 def query_gpt_and_find_medicine(symptoms, df, conversation_history):
@@ -35,7 +35,7 @@ Medicine list:
     return response.choices[0].message.content
 
 
-
+@count_agent_usage
 def agent_ai():
     try:
         df = pd.read_excel("drugs.xlsx")

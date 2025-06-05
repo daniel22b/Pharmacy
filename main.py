@@ -73,7 +73,7 @@ def main():
                 show_register_customers_window()
                 window.close()
                 break
-            if event == "Agent":
+            if event == 'Agent':
                 agent_ai()
 
 
