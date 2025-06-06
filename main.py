@@ -47,7 +47,7 @@ def start_window():
         [sg.B('Zaloguj się', size=(20, 2), button_color=('white', 'green'))],
         [sg.B('Zarejestruj się', size=(20, 2), button_color=('white', 'blue'))],
         [sg.B('Wyjdź', size=(20, 2), button_color=('white', 'red'))],
-        [sg.Button("Agent")]
+        [sg.Button("Skontaktuj sie z asystenetem AI")]
     ]
     window = sg.Window('Witamy w systemie apteki', layout, background_color='#2B2B2B')
     return window
@@ -73,7 +73,7 @@ def main():
                 show_register_customers_window()
                 window.close()
                 break
-            if event == 'Agent':
+            if event == 'Skontaktuj sie z asystenetem AI':
                 agent_ai()
 
 

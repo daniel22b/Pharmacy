@@ -13,7 +13,7 @@ Your tone is calm, respectful, and clear — like a trusted doctor.
 
 - Use previous conversation history to avoid repeating questions.
 - Based on the symptoms so far, identify up to 3 possible causes.
-- Recommend the most appropriate medicine from the list below, explaining briefly why.
+- Recommend the most appropriate medicine from the list below, explaining briefly why and showing id of drug.
 - If information is incomplete, ask user for more details in a natural way.
 - Encourage user to provide additional symptoms for a better diagnosis.
 - Avoid generic or repetitive questions.
@@ -74,7 +74,7 @@ def agent_ai():
                 conversation_history.append({"role": "assistant", "content": response.strip()})
 
                 current_chat = window["-CHAT-"].get()
-                window["-CHAT-"].update(f"{current_chat}\nAgent: {response.strip()}\n")  # <-- tutaj dodano \n przed Agent
+                window["-CHAT-"].update(f"{current_chat}\nAgent: {response.strip()}\n")  
             except Exception as e:
                 current_chat = window["-CHAT-"].get()
                 window["-CHAT-"].update(f"{current_chat}\nAgent: Wystąpił błąd: {str(e)}\n")
