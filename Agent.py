@@ -2,8 +2,11 @@ import PySimpleGUI as sg
 import pandas as pd
 from openai import OpenAI
 from dekorator import count_agent_usage
-client = OpenAI(api_key="")
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 def query_gpt_and_find_medicine(symptoms, df, conversation_history):
     prompt = f"""
 The user writes symptoms in Polish: "{symptoms}".
