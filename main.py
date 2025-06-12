@@ -81,6 +81,7 @@ def main():
                     event, values = login.read()
                     if event is None or event == 'Anuluj':
                         login.close()
+                        window.close()
                         break
 
                     if event == 'Zaloguj':
