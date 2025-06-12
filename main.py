@@ -7,20 +7,28 @@ from Agent import agent_ai
 CORRECT_UN = ""
 CORRECT_PIN = ""
 
+sg.theme('DefaultNoMoreNagging')
+
+def white_push(horizontal=True):
+    return sg.Push(background_color='white') if horizontal else sg.VPush(background_color='white')
+
+def center_layout(layout):
+    return [
+        [white_push(horizontal=False)],
+        [white_push(), sg.Column(layout, justification='center', element_justification='center',
+                                 expand_x=True, background_color='white'), white_push()],
+        [white_push(horizontal=False)]
+    ]
 
 def create_admin_window():
     layout = [
-        [sg.T("Witaj,Administratorze", 
-              font=('Helvetica', 16))],
-        [sg.Button('Lista klientów', size=(20, 2), button_color=('white', 'green'))],
-        [sg.B('Lista leków', size=(20, 2), button_color=('white', 'green'))],
-
+        [sg.Text("Witaj, Administratorze", font=('Segoe UI', 24), justification='center', background_color='white')],
+        [sg.Button('Lista klientów', size=(30, 3), button_color=('white', '#6BCB77'))],
+        [sg.Button('Lista leków', size=(30, 3), button_color=('white', '#6BCB77'))],
+        [sg.Button('Wyloguj się', size=(30, 3), button_color=('white', '#FF6B6B'))]
     ]
-    
-    layout.append([sg.B('Wyloguj się', size=(20, 2), button_color=('white', 'red'))])
-    
-    window = sg.Window('System Apteki', layout, element_justification='center', background_color='#2B2B2B')
-    
+    window = sg.Window('Panel Administratora', center_layout(layout), background_color='white', size=(1200, 900), element_justification='center', finalize=True)
+
     while True:
         event, values = window.read()
         
@@ -39,25 +47,26 @@ def create_admin_window():
             show_drug_list_window()
             window.un_hide()
 
-
 def start_window():
     layout = [
-
-        [sg.B('Zaloguj się', size=(20, 2), button_color=('white', 'green'))],
-        [sg.B('Zarejestruj się', size=(20, 2), button_color=('white', 'blue'))],
-        [sg.B('Wyjdź', size=(20, 2), button_color=('white', 'red'))],
-        [sg.Button("Skontaktuj sie z asystenetem AI")]
+        [sg.Text("Witamy w systemie apteki", font=('Segoe UI', 28), justification='center', background_color='white')],
+        [sg.Button('Zaloguj się', size=(30, 3), button_color=('white', '#89CFF0'))],
+        [sg.Button('Zarejestruj się', size=(30, 3), button_color=('white', '#89CFF0'))],
+        [sg.Button('Wyjdź', size=(30, 3), button_color=('white', '#FFB6B6'))],
+        [sg.Button('Skontaktuj sie z asystenetem AI', size=(35, 3), button_color=('black', '#D3D3D3'))]
     ]
-    window = sg.Window('Witamy w systemie apteki', layout, background_color='#2B2B2B')
-    return window
+    return sg.Window('Witamy w systemie apteki', center_layout(layout), background_color='white', size=(1200, 900), element_justification='center', finalize=True)
+
 def login_window():
     layout = [
-        [sg.Text('Nazwa użytkownika:'), sg.Input(key='-UNAME-')],
-        [sg.Text('Hasło:'), sg.Input(key='-PASS-', password_char='*')],
-        [sg.B('Zaloguj', button_color=('white', 'green')), sg.B('Anuluj')]
+        [sg.Text('Nazwa użytkownika:', font=('Segoe UI', 16), background_color='white')],
+        [sg.Input(key='-UNAME-', font=('Segoe UI', 14), size=(30, 1))],
+        [sg.Text('Hasło:', font=('Segoe UI', 16), background_color='white')],
+        [sg.Input(key='-PASS-', password_char='*', font=('Segoe UI', 14), size=(30, 1))],
+        [sg.Button('Zaloguj', size=(20, 2), button_color=('white', '#89CFF0')),
+         sg.Button('Anuluj', size=(20, 2), button_color=('black', '#E0E0E0'))]
     ]
-    return sg.Window('Logowanie', layout, background_color='#2B2B2B')
-
+    return sg.Window('Logowanie', center_layout(layout), background_color='white', size=(1200, 900), element_justification='center', finalize=True)
 
 def main():
     while True:
