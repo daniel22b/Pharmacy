@@ -9,7 +9,6 @@ CORRECT_PIN = ""
 
 
 def create_admin_window():
-    """Create and show the main window"""
     layout = [
         [sg.T("Witaj,Administratorze", 
               font=('Helvetica', 16))],
