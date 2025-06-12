@@ -20,9 +20,11 @@
    
 2. (Zalecane) Utwórz wirtualne środowisko — utrzymasz porządek w pakietach:   
 python -m venv venv
-# Linux/macOS:
+
+Linux/macOS:
 source venv/bin/activate
-# Windows (PowerShell):
+
+Windows (PowerShell):
 .\venv\Scripts\Activate.ps1
 
 3. Zainstaluj zależności z pliku requirements.txt:
