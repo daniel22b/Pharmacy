@@ -2,6 +2,8 @@ import PySimpleGUI as sg
 import os
 import pandas as pd
 from Add_del_customer import add_customer,remove_customer
+from layout_utils import center_layout
+
 
 ADRESS_FILE = "address.csv"
 CUSTOMERS_FILE = "customers.csv"
@@ -32,29 +34,35 @@ def load_customers(filter_query=''):
 
 def show_customers_list_window():
     layout = [
-        [sg.T('Lista klientów', font=('Helvetica', 16))],
-        [sg.T('Wyszukaj:'), 
-         sg.I(key='-SEARCH-', size=(30, 1)),
-         sg.B('Szukaj', button_color=('white', 'green')),
-         sg.B('Pokaż wszystko', button_color=('white', 'green'))],
-        [sg.Table(values=[], 
-                 headings=["ID","NAME","SURNAME","E-MAIL","PHONE","CREATED","AGE","GENDER"],
-                 key='-TABLE-',
-                 auto_size_columns=True,
-                 justification='center',
-                 num_rows=10,
-                 background_color='#2B2B2B',
-                 text_color='white',
-                 header_background_color='green',
-                 header_text_color='white',
-                 select_mode=sg.TABLE_SELECT_MODE_BROWSE,
-                 enable_click_events=True)],
-        [sg.B('Dodaj klienta', button_color=('white', 'green')), 
-         sg.B('Usuń zaznaczony', button_color=('white', 'red')),
-         sg.B('Zamknij', button_color=('white', 'gray'))]
+        [sg.Text('Lista klientów', font=('Segoe UI', 24), background_color='white')],
+        [sg.Text('Wyszukaj:', font=('Segoe UI', 14), background_color='white'),
+         sg.Input(key='-SEARCH-', size=(30, 1), font=('Segoe UI', 14)),
+         sg.Button('Szukaj', button_color=('white', '#6BCB77'), font=('Segoe UI', 12)),
+         sg.Button('Pokaż wszystko', button_color=('white', '#6BCB77'), font=('Segoe UI', 12))],
+        [sg.Table(
+            values=[],
+            headings=["ID", "NAME", "SURNAME", "E-MAIL", "PHONE", "CREATED", "AGE", "GENDER"],
+            key='-TABLE-',
+            auto_size_columns=False,  # wyłącz automatyczne dopasowanie kolumn
+            col_widths=[5, 15, 15, 25, 15, 15, 5, 10],  # przykładowe szerokości kolumn
+            justification='center',
+            num_rows=20,  # większa liczba wierszy
+            font=('Segoe UI', 12),
+            background_color='white',
+            text_color='black',
+            header_background_color='#6BCB77',
+            header_text_color='white',
+            select_mode=sg.TABLE_SELECT_MODE_BROWSE,
+            enable_click_events=True
+        )],
+        [sg.Button('Dodaj klienta', button_color=('white', '#6BCB77'), size=(20, 2), font=('Segoe UI', 12)),
+         sg.Button('Usuń zaznaczony', button_color=('white', '#FF6B6B'), size=(20, 2), font=('Segoe UI', 12)),
+         sg.Button('Zamknij', button_color=('black', '#D3D3D3'), size=(20, 2), font=('Segoe UI', 12))]
     ]
-    
-    window = sg.Window('Lista klientow', layout, finalize=True, background_color='#2B2B2B')
+
+    window = sg.Window('Lista klientów', center_layout(layout), background_color='white',
+                     size=(1200, 900), element_justification='center', finalize=True)
+
     
     table_data = load_customers()
     window['-TABLE-'].update(table_data)
@@ -109,28 +117,50 @@ def show_customers_list_window():
 
 
 def show_register_customers_window():
-    """Show window for adding new drugs"""
+    input_style = {
+        'font': ('Segoe UI', 14),
+        'size': (40, 1),
+        'background_color': '#F0F0F0',   # jasne tło pola
+        'text_color': 'black',
+        'border_width': 2,               # wyraźniejsze obramowanie
+        'focus': False                   # opcjonalnie, żeby nie było focus przy starcie
+    }
+
     layout = [
-        [sg.T('Dodaj klienta', font=('Helvetica', 16))],
-        [sg.T('Email:'), sg.I(key='-EMAIL-')],
-        [sg.T('Nazwa użytkownika:'), sg.I(key='-USERNAME-')],
-        [sg.T('Hasło:'), sg.I(password_char='*',key='-PASSWORD-')],
-        [sg.T('Potwiedź hasło:'), sg.I(password_char='*',key='-CONFIRM-PASSWORD-')],
-        [sg.T('Imie:'), sg.I(key='-NAME-')],
-        [sg.T('Nazwisko:'), sg.I(key='-SRNAME-')],
-        [sg.T('Telefon:'), sg.I(key='-PHONE-')],
-        [sg.T('Data urodzenia:'), sg.I(key='-DOB-')],
-        [sg.T('Ulica:'), sg.I(key='-STREET-')],
-        [sg.T('Miasto:'), sg.I(key='-CITY-')],
-        [sg.T('Kraj:'), sg.I(key='-COUNTRY-')],
-        [sg.T('Płeć:'), 
-         sg.Combo(['Kobieta', 'Mężczyzna'], default_value='Kobieta', key='-GENDER-')],
-        [sg.B('Dodaj', button_color=('white', 'green')), 
-         sg.B('Anuluj', button_color=('white', 'gray'))]
+        [sg.Text('Dodaj klienta', font=('Segoe UI', 24), background_color='white')],
+        [sg.Text('Email:', font=('Segoe UI', 14), background_color='white'),
+         sg.Input(key='-EMAIL-', **input_style)],
+        [sg.Text('Nazwa użytkownika:', font=('Segoe UI', 14), background_color='white'),
+         sg.Input(key='-USERNAME-', **input_style)],
+        [sg.Text('Hasło:', font=('Segoe UI', 14), background_color='white'),
+         sg.Input(key='-PASSWORD-', password_char='*', **input_style)],
+        [sg.Text('Potwierdź hasło:', font=('Segoe UI', 14), background_color='white'),
+         sg.Input(key='-CONFIRM-PASSWORD-', password_char='*', **input_style)],
+        [sg.Text('Imię:', font=('Segoe UI', 14), background_color='white'),
+         sg.Input(key='-NAME-', **input_style)],
+        [sg.Text('Nazwisko:', font=('Segoe UI', 14), background_color='white'),
+         sg.Input(key='-SRNAME-', **input_style)],
+        [sg.Text('Telefon:', font=('Segoe UI', 14), background_color='white'),
+         sg.Input(key='-PHONE-', **input_style)],
+        [sg.Text('Data urodzenia:', font=('Segoe UI', 14), background_color='white'),
+         sg.Input(key='-DOB-', **input_style)],
+        [sg.Text('Ulica:', font=('Segoe UI', 14), background_color='white'),
+         sg.Input(key='-STREET-', **input_style)],
+        [sg.Text('Miasto:', font=('Segoe UI', 14), background_color='white'),
+         sg.Input(key='-CITY-', **input_style)],
+        [sg.Text('Kraj:', font=('Segoe UI', 14), background_color='white'),
+         sg.Input(key='-COUNTRY-', **input_style)],
+        [sg.Text('Płeć:', font=('Segoe UI', 14), background_color='white'),
+         sg.Combo(['Kobieta', 'Mężczyzna'], default_value='Kobieta', key='-GENDER-', font=('Segoe UI', 14), size=(20, 1))],
+        [sg.Button('Dodaj', button_color=('white', '#6BCB77'), size=(20, 2), font=('Segoe UI', 14)),
+         sg.Button('Anuluj', button_color=('black', '#D3D3D3'), size=(20, 2), font=('Segoe UI', 14))]
     ]
-    
-    window = sg.Window('Dodaj klienta', layout, background_color='#2B2B2B')
-    
+
+    window = sg.Window('Dodaj klienta', center_layout(layout), background_color='white',
+                     size=(1200, 900), element_justification='center', finalize=True)
+
+
+
     while True:
         event, values = window.read()
         

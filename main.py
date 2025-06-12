@@ -3,28 +3,18 @@ from ADMIN_drug_module import show_drug_list_window
 from ADMIN_customer_module import show_customers_list_window, show_register_customers_window, validate_user_login
 from klient_login import show_user_main_window
 from Agent import agent_ai
+from layout_utils import center_layout
 
 CORRECT_UN = ""
 CORRECT_PIN = ""
 
 sg.theme('DefaultNoMoreNagging')
 
-def white_push(horizontal=True):
-    return sg.Push(background_color='white') if horizontal else sg.VPush(background_color='white')
-
-def center_layout(layout):
-    return [
-        [white_push(horizontal=False)],
-        [white_push(), sg.Column(layout, justification='center', element_justification='center',
-                                 expand_x=True, background_color='white'), white_push()],
-        [white_push(horizontal=False)]
-    ]
-
 def create_admin_window():
     layout = [
         [sg.Text("Witaj, Administratorze", font=('Segoe UI', 24), justification='center', background_color='white')],
-        [sg.Button('Lista klientów', size=(30, 3), button_color=('white', '#6BCB77'))],
-        [sg.Button('Lista leków', size=(30, 3), button_color=('white', '#6BCB77'))],
+        [sg.Button('Lista klientów', size=(30, 3), button_color=('white', '#89CFF0'))],
+        [sg.Button('Lista leków', size=(30, 3), button_color=('white', '#89CFF0'))],
         [sg.Button('Wyloguj się', size=(30, 3), button_color=('white', '#FF6B6B'))]
     ]
     window = sg.Window('Panel Administratora', center_layout(layout), background_color='white', size=(1200, 900), element_justification='center', finalize=True)
@@ -52,7 +42,7 @@ def start_window():
         [sg.Text("Witamy w systemie apteki", font=('Segoe UI', 28), justification='center', background_color='white')],
         [sg.Button('Zaloguj się', size=(30, 3), button_color=('white', '#89CFF0'))],
         [sg.Button('Zarejestruj się', size=(30, 3), button_color=('white', '#89CFF0'))],
-        [sg.Button('Wyjdź', size=(30, 3), button_color=('white', '#FFB6B6'))],
+        [sg.Button('Wyjdź', size=(30, 3), button_color=('white', '#FF6B6B'))],
         [sg.Button('Skontaktuj sie z asystenetem AI', size=(35, 3), button_color=('black', '#D3D3D3'))]
     ]
     return sg.Window('Witamy w systemie apteki', center_layout(layout), background_color='white', size=(1200, 900), element_justification='center', finalize=True)

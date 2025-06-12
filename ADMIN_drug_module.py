@@ -4,11 +4,11 @@ import pandas as pd
 from Add_del_drug import DrugDatabase
 from add_purchase_to_customer_file import add_purchase_to_customer_file
 DRUGS_FILE = "drugs.xlsx"
+from layout_utils import center_layout
 
 db = DrugDatabase()
 
 def load_drugs(filter_query=''):
-    """Load drugs from Excel file with optional filtering"""
     try:
         if not os.path.exists(DRUGS_FILE):
             return []
@@ -38,40 +38,49 @@ def load_drugs(filter_query=''):
         return []
 
 def show_drug_list_window(user_mode=False, client_id=None):
-    """Show drug list window with management options"""
-    # Create the layout
+    input_style = {
+        'font': ('Segoe UI', 14),
+        'size': (40, 1),
+        'background_color': '#F0F0F0',
+        'text_color': 'black',
+        'border_width': 2,
+    }
+
     layout = [
-        [sg.T('Lista leków', font=('Helvetica', 16))],
-        [sg.T('Wyszukaj:'), 
-         sg.I(key='-SEARCH-', size=(30, 1)),
-         sg.B('Szukaj', button_color=('white', 'green')),
-         sg.B('Pokaż wszystko', button_color=('white', 'green'))],
-        [sg.Table(values=[], 
-                 headings=['ID', 'Nazwa', 'Na receptę', 'Ilość', 'Data dodania','Numer recepty','Cena'],
-                 key='-TABLE-',
-                 auto_size_columns=True,
-                 justification='center',
-                 num_rows=10,
-                 background_color='#2B2B2B',
-                 text_color='white',
-                 header_background_color='green',
-                 header_text_color='white',
-                 select_mode=sg.TABLE_SELECT_MODE_BROWSE,
-                 enable_click_events=True)],
-        [
-            *([
-                  sg.B('Dodaj lek', button_color=('white', 'green')),
-                  sg.B('Edytuj', button_color=('white', 'blue')),
-                  sg.B('Usuń', button_color=('white', 'red')),
-              ] if not user_mode else []),
-         sg.B('Zamów', button_color=('white', 'purple')),
-         sg.B('Zamknij', button_color=('white', 'gray'))]
-         
+        [sg.Text('Lista leków', font=('Segoe UI', 24), background_color='white')],
+        [sg.Text('Wyszukaj:', font=('Segoe UI', 14), background_color='white'),
+         sg.Input(key='-SEARCH-', **input_style),
+         sg.Button('Szukaj', button_color=('white', '#6BCB77'), font=('Segoe UI', 12)),
+         sg.Button('Pokaż wszystko', button_color=('white', '#6BCB77'), font=('Segoe UI', 12))],
+        [sg.Table(
+            values=[],
+            headings=['ID', 'Nazwa', 'Na receptę', 'Ilość', 'Data dodania', 'Numer recepty', 'Cena'],
+            key='-TABLE-',
+            auto_size_columns=False,
+            col_widths=[6, 25, 10, 8, 15, 15, 8],
+            justification='center',
+            num_rows=15,
+            font=('Segoe UI', 12),
+            background_color='white',
+            text_color='black',
+            header_background_color='#6BCB77',
+            header_text_color='white',
+            select_mode=sg.TABLE_SELECT_MODE_BROWSE,
+            enable_click_events=True
+        )],
+        [*([
+            sg.Button('Dodaj lek', button_color=('white', '#6BCB77'), size=(20, 2), font=('Segoe UI', 14)),
+            sg.Button('Edytuj', button_color=('white', '#89CFF0'), size=(20, 2), font=('Segoe UI', 14)),
+            sg.Button('Usuń', button_color=('white', '#FF6B6B'), size=(20, 2), font=('Segoe UI', 14)),
+        ] if not user_mode else []),
+         sg.Button('Zamów', button_color=('white', '#800080'), size=(20, 2), font=('Segoe UI', 14)),
+         sg.Button('Zamknij', button_color=('black', '#D3D3D3'), size=(20, 2), font=('Segoe UI', 14))]
     ]
-    
-    window = sg.Window('Lista leków', layout, finalize=True, background_color='#2B2B2B')
-    
-    # Initial load
+
+    window = sg.Window('Lista leków', center_layout(layout), background_color='white',
+                     size=(1200, 900), element_justification='center', finalize=True)
+
+
     table_data = load_drugs()
     window['-TABLE-'].update(table_data)
     
@@ -131,23 +140,48 @@ def show_drug_list_window(user_mode=False, client_id=None):
                         sg.popup_error(f'Nie udało się usunąć leku: {e}')
     window.close()
 
+
 def show_add_drug_window():
+    input_style = {
+        'font': ('Segoe UI', 14),
+        'size': (40, 1),
+        'background_color': '#F0F0F0',
+        'text_color': 'black',
+        'border_width': 2
+    }
+
     layout = [
-        [sg.T('Dodaj lek', font=('Helvetica', 16))],
-        [sg.T('Nazwa leku:'), sg.I(key='-DRUG-')],
-        [sg.T('Na receptę:'), 
-         sg.Combo(['YES', 'NO'], default_value='NO', key='-RECEPT-', enable_events=True)],
+        [sg.Text('Dodaj lek', font=('Segoe UI', 24), background_color='white', pad=((0, 0), (20, 20)))],
+
+        [sg.Text('Nazwa leku:', font=('Segoe UI', 14), background_color='white', size=(20, 1)),
+         sg.Input(key='-DRUG-', **input_style)],
+
+        [sg.Text('Na receptę:', font=('Segoe UI', 14), background_color='white', size=(20, 1)),
+         sg.Combo(['YES', 'NO'], default_value='NO', key='-RECEPT-', font=('Segoe UI', 14), size=(10, 1),
+                  enable_events=True)],
+
         [sg.Column([
-            [sg.T('ID recepty:'), sg.I(key='-RECEPT-ID-', size=(10, 1))]
-        ], key='-RECEPT-ROW-', visible=False)],
-        [sg.T('Liczba opakowań:'), sg.I(key='-PACKAGES-', size=(10, 1))],
-        [sg.T('Cena:'), sg.I(key='-PRICE-', size=(10,1))],
-        [sg.B('Dodaj', button_color=('white', 'green')), 
-         sg.B('Anuluj', button_color=('white', 'gray'))]
+            [sg.Text('ID recepty:', font=('Segoe UI', 14), background_color='white', size=(20, 1)),
+             sg.Input(key='-RECEPT-ID-', size=(20, 1), font=('Segoe UI', 14),
+                      background_color='#F0F0F0', text_color='black', border_width=2)]
+        ], key='-RECEPT-ROW-', visible=False, background_color='white', pad=((20, 0), (10, 20)))],
+
+        [sg.Text('Liczba opakowań:', font=('Segoe UI', 14), background_color='white', size=(20, 1)),
+         sg.Input(key='-PACKAGES-', size=(20, 1), font=('Segoe UI', 14),
+                  background_color='#F0F0F0', text_color='black', border_width=2, pad=((0, 0), (0, 20)))],
+
+        [sg.Text('Cena:', font=('Segoe UI', 14), background_color='white', size=(20, 1)),
+         sg.Input(key='-PRICE-', size=(20, 1), font=('Segoe UI', 14),
+                  background_color='#F0F0F0', text_color='black', border_width=2)],
+
+        [sg.HorizontalSeparator(color='#6BCB77', pad=((0, 0), (20, 20)))],
+
+        [sg.Button('Dodaj', button_color=('white', '#6BCB77'), size=(20, 2), font=('Segoe UI', 14)),
+         sg.Button('Anuluj', button_color=('black', '#D3D3D3'), size=(20, 2), font=('Segoe UI', 14), pad=((20, 0), 0))]
     ]
-    
-    window = sg.Window('Dodaj lek', layout, background_color='#2B2B2B', finalize=True)
-    
+
+    window = sg.Window('Dodaj lek', center_layout(layout), background_color='white', size=(1200, 900), element_justification='center', finalize=True)
+
     while True:
         event, values = window.read()
         
@@ -186,24 +220,49 @@ def show_add_drug_window():
     
     window.close()
 
+
 def show_edit_drug_window(row):
-    drug_id, drug_name, recept, packages,created, recept_id,price = row
-    
+    drug_id, drug_name, recept, packages, created, recept_id, price = row
+
+    input_style = {
+        'font': ('Segoe UI', 14),
+        'size': (40, 1),
+        'background_color': '#F0F0F0',
+        'text_color': 'black',
+        'border_width': 2,
+        'pad': (0, 10)
+    }
+
     layout = [
-        [sg.T('Edytuj lek', font=('Helvetica', 16))],
-        [sg.T('Nazwa leku:'), sg.I(drug_name, key='-DRUG-')],
-        [sg.T('Na receptę:'), 
-         sg.Combo(['YES', 'NO'], default_value=recept, key='-RECEPT-', enable_events=True)],
+        [sg.Text('Edytuj lek', font=('Segoe UI', 24), background_color='white', pad=((0, 0), (20, 20)))],
+
+        [sg.Text('Nazwa leku:', font=('Segoe UI', 14), background_color='white', size=(20, 1)),
+         sg.Input(drug_name, key='-DRUG-', **input_style)],
+
+        [sg.Text('Na receptę:', font=('Segoe UI', 14), background_color='white', size=(20, 1)),
+         sg.Combo(['YES', 'NO'], default_value=recept, key='-RECEPT-', font=('Segoe UI', 14), size=(10, 1),
+                  enable_events=True, pad=(0, 10))],
+
         [sg.Column([
-            [sg.T('ID recepty:'), sg.I(recept_id if recept_id != 'None' else '', key='-RECEPT-ID-')]
-        ], key='-RECEPT-ROW-', visible=(recept == 'YES'))],
-        [sg.T('Liczba opakowań:'), sg.I(packages, key='-PACKAGES-')],
-        [sg.T('Cena:'), sg.I(price, key='-PRICE-', size=(10,1))],
-        [sg.B('Zapisz', button_color=('white', 'green')), 
-         sg.B('Anuluj', button_color=('white', 'gray'))]
+            [sg.Text('ID recepty:', font=('Segoe UI', 14), background_color='white', size=(20, 1)),
+             sg.Input(recept_id if recept_id != 'None' else '', key='-RECEPT-ID-', font=('Segoe UI', 14),
+                      size=(20, 1), background_color='#F0F0F0', text_color='black', border_width=2)]
+        ], key='-RECEPT-ROW-', visible=(recept == 'YES'), background_color='white', pad=((0, 0), (0, 20)))],
+
+        [sg.Text('Liczba opakowań:', font=('Segoe UI', 14), background_color='white', size=(20, 1)),
+         sg.Input(packages, key='-PACKAGES-', **input_style)],
+
+        [sg.Text('Cena:', font=('Segoe UI', 14), background_color='white', size=(20, 1)),
+         sg.Input(price, key='-PRICE-', **input_style)],
+
+        [sg.HorizontalSeparator(color='#6BCB77', pad=((0, 0), (20, 20)))],
+
+        [sg.Button('Zapisz', button_color=('white', '#6BCB77'), size=(20, 2), font=('Segoe UI', 14)),
+         sg.Button('Anuluj', button_color=('black', '#D3D3D3'), size=(20, 2), font=('Segoe UI', 14), pad=((20, 0), 0))]
     ]
-    
-    window = sg.Window(f'Edycja leku ID: {drug_id}', layout, background_color='#2B2B2B', finalize=True)
+
+    window = sg.Window(f'Edycja leku ID: {drug_id}', center_layout(layout), background_color='white', size=(1200, 900), element_justification='center', finalize=True
+    )
 
     while True:
         event, values = window.read()
@@ -241,16 +300,31 @@ def show_edit_drug_window(row):
     window.close()
 
 def order_drug_window(row, client_id):
-    drug_id, drug_name, recept, packages, created, recept_id,price = row
+    drug_id, drug_name, recept, packages, created, recept_id, price = row
+
+    input_style = {
+        'font': ('Segoe UI', 14),
+        'size': (20, 1),
+        'background_color': '#F0F0F0',
+        'text_color': 'black',
+        'border_width': 2,
+        'pad': (0, 10)
+    }
 
     layout = [
-        [sg.T(f'Zamów lek: {drug_name}', font=('Helvetica', 16))],
-        [sg.T('Ilość do zamówienia:'), sg.I(key='-QTY-', size=(10, 1))],
-        [sg.B('Zamów', button_color=('white', 'green')),
-         sg.B('Anuluj', button_color=('white', 'gray'))]
+        [sg.Text(f'Zamów lek: {drug_name}', font=('Segoe UI', 24), background_color='white', pad=((0,0),(20,20)))],
+
+        [sg.Text('Ilość do zamówienia:', font=('Segoe UI', 14), background_color='white', size=(20,1)),
+         sg.Input(key='-QTY-', **input_style)],
+
+        [sg.HorizontalSeparator(color='#6BCB77', pad=((0,0),(20,20)))],
+
+        [sg.Button('Zamów', button_color=('white', '#6BCB77'), size=(20, 2), font=('Segoe UI', 14)),
+         sg.Button('Anuluj', button_color=('black', '#D3D3D3'), size=(20, 2), font=('Segoe UI', 14), pad=((20,0),0))]
     ]
 
-    window = sg.Window('Zamów lek', layout, background_color='#2B2B2B', finalize=True)
+    window = sg.Window('Zamów lek', center_layout(layout), background_color='white', size=(600, 300), element_justification='center', finalize=True)
+
 
     while True:
         event, values = window.read()
