@@ -15,5 +15,18 @@
 
 1. **Sklonuj repozytorium** (lub pobierz paczkę ZIP):
    ```bash
-   git clone https://github.com/TWOJ-LOGIN/TWOJE-REPO.git
-   cd TWOJE-REPO
+   git clone https://github.com/daniel22b/Pharmacy.git
+   cd Pharmacy
+   
+2 **(Zalecane) Utwórz wirtualne środowisko — utrzymasz porządek w pakietach:   
+python -m venv venv
+# Linux/macOS:
+source venv/bin/activate
+# Windows (PowerShell):
+.\venv\Scripts\Activate.ps1
+
+3 **Zainstaluj zależności z pliku requirements.txt:
+pip install -r requirements.txt
+
+
+
