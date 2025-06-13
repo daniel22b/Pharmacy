@@ -2,8 +2,7 @@ import PySimpleGUI as sg
 import os
 import pandas as pd
 from Add_del_customer import add_customer,remove_customer
-from layout_utils import center_layout
-
+from layout_utils import input_style, center_layout, white_push
 
 ADRESS_FILE = "address.csv"
 CUSTOMERS_FILE = "customers.csv"
@@ -36,17 +35,17 @@ def show_customers_list_window():
     layout = [
         [sg.Text('Lista klientów', font=('Segoe UI', 24), background_color='white')],
         [sg.Text('Wyszukaj:', font=('Segoe UI', 14), background_color='white'),
-         sg.Input(key='-SEARCH-', size=(30, 1), font=('Segoe UI', 14)),
+         sg.Input(key='-SEARCH-', **input_style),
          sg.Button('Szukaj', button_color=('white', '#6BCB77'), font=('Segoe UI', 12)),
          sg.Button('Pokaż wszystko', button_color=('white', '#6BCB77'), font=('Segoe UI', 12))],
         [sg.Table(
             values=[],
             headings=["ID", "NAME", "SURNAME", "E-MAIL", "PHONE", "CREATED", "AGE", "GENDER"],
             key='-TABLE-',
-            auto_size_columns=False,  # wyłącz automatyczne dopasowanie kolumn
-            col_widths=[5, 15, 15, 25, 15, 15, 5, 10],  # przykładowe szerokości kolumn
+            auto_size_columns=False,
+            col_widths=[5, 15, 15, 25, 15, 15, 5, 10],
             justification='center',
-            num_rows=20,  # większa liczba wierszy
+            num_rows=20,
             font=('Segoe UI', 12),
             background_color='white',
             text_color='black',
@@ -120,10 +119,10 @@ def show_register_customers_window():
     input_style = {
         'font': ('Segoe UI', 14),
         'size': (40, 1),
-        'background_color': '#F0F0F0',   # jasne tło pola
+        'background_color': '#F0F0F0',
         'text_color': 'black',
-        'border_width': 2,               # wyraźniejsze obramowanie
-        'focus': False                   # opcjonalnie, żeby nie było focus przy starcie
+        'border_width': 2,
+        'focus': False
     }
 
     layout = [

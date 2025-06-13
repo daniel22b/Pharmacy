@@ -3,7 +3,7 @@ from ADMIN_drug_module import show_drug_list_window
 from ADMIN_customer_module import show_customers_list_window, show_register_customers_window, validate_user_login
 from klient_login import show_user_main_window
 from Agent import agent_ai
-from layout_utils import center_layout
+from layout_utils import input_style, center_layout, white_push
 
 CORRECT_UN = ""
 CORRECT_PIN = ""
@@ -50,9 +50,9 @@ def start_window():
 def login_window():
     layout = [
         [sg.Text('Nazwa użytkownika:', font=('Segoe UI', 16), background_color='white')],
-        [sg.Input(key='-UNAME-', font=('Segoe UI', 14), size=(30, 1))],
+        [sg.Input(key='-UNAME-', **input_style)],
         [sg.Text('Hasło:', font=('Segoe UI', 16), background_color='white')],
-        [sg.Input(key='-PASS-', password_char='*', font=('Segoe UI', 14), size=(30, 1))],
+        [sg.Input(key='-PASS-', password_char='*', **input_style)],
         [sg.Button('Zaloguj', size=(20, 2), button_color=('white', '#89CFF0')),
          sg.Button('Anuluj', size=(20, 2), button_color=('black', '#E0E0E0'))]
     ]

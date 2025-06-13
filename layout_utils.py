@@ -10,3 +10,9 @@ def center_layout(layout):
                                  expand_x=True, background_color='white'), white_push()],
         [white_push(horizontal=False)]
     ]
+input_style = {
+    'font': ('Segoe UI', 14),
+    'size': (40, 1),
+    'background_color': '#F0F0F0',
+    'text_color': 'black'
+}

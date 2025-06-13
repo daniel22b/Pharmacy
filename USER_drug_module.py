@@ -4,6 +4,7 @@ import os
 from Add_del_drug import DrugDatabase
 from add_purchase_to_customer_file import add_purchase_to_customer_file
 from Agent import agent_ai,query_gpt_and_find_medicine
+from layout_utils import input_style, center_layout, white_push
 
 DRUGS_FILE = "drugs.xlsx"
 db = DrugDatabase()
@@ -57,50 +58,74 @@ def show_user_drug_window(client_id):
 
     layout = [
         [
+            sg.VPush(),
+
             sg.Column([
-                [sg.Text('Lista leków', font=('Helvetica', 16, 'bold'), text_color='white', background_color='#2B2B2B')],
-                [
-                    sg.Text('Szukaj:', background_color='#2B2B2B', text_color='white'),
-                    sg.Input(key='-SEARCH-', size=(30, 1)),
-                    sg.Button('Szukaj', button_color=('white', 'green')),
-                    sg.Button('Pokaż wszystko', button_color=('white', 'green'))
-                ],
+                [sg.Text('Lista leków', font=('Segoe UI', 20, 'bold'), text_color='black', background_color='white',
+                         pad=(0, 20))],
+
+                [sg.Text('Szukaj:', background_color='white', text_color='black', font=('Segoe UI', 12)),
+                 sg.Input(key='-SEARCH-', **input_style),
+                 sg.Button('Szukaj', button_color=('white', '#6BCB77'), font=('Segoe UI', 12)),
+                 sg.Button('Pokaż wszystko', button_color=('white', '#6BCB77'), font=('Segoe UI', 12))],
+
                 [sg.Table(
                     values=[],
                     headings=['ID', 'Nazwa', 'Recepta', 'Cena'],
                     key='-TABLE-',
                     auto_size_columns=False,
-                    col_widths=[8, 25, 10],
+                    col_widths=[8, 25, 10, 10],
                     justification='left',
-                    num_rows=10,
+                    num_rows=15,
                     enable_events=True,
-                    background_color='#2B2B2B',
-                    text_color='white',
-                    header_background_color='darkgreen',
+                    font=('Segoe UI', 11),
+                    background_color='white',
+                    text_color='black',
+                    header_background_color='#6BCB77',
                     header_text_color='white',
-                    alternating_row_color='#3C3C3C',
+                    alternating_row_color='#F0F0F0',
                     select_mode=sg.TABLE_SELECT_MODE_BROWSE
                 )],
-                [
-                    sg.Button('Dodaj do koszyka', button_color=('white', 'purple')),
-                    sg.Button('Kup teraz', button_color=('white', 'green')),
-                    sg.Button('Zamknij', button_color=('white', 'gray'))
-                ],
-                [sg.Text('Koszyk:', font=('Helvetica', 12, 'bold'), text_color='white', background_color='#2B2B2B')],
-                [sg.Listbox(values=[], size=(60, 5), key='-CART-', background_color='#1E1E1E', text_color='white')]
-            ], element_justification='left'),
 
-            sg.VerticalSeparator(),
+                [sg.Button('Dodaj do koszyka', button_color=('white', '#89CFF0'), font=('Segoe UI', 12)),
+                 sg.Button('Kup teraz', button_color=('white', '#6BCB77'), font=('Segoe UI', 12)),
+                 sg.Button('Zamknij', button_color=('white', '#FF6B6B'), font=('Segoe UI', 12))],
+
+                [sg.Text('Koszyk:', font=('Segoe UI', 12, 'bold'), text_color='black', background_color='white',
+                         pad=(0, 5))],
+                [sg.Listbox(values=[], size=(50, 4), key='-CART-', font=('Segoe UI', 11),
+                            background_color='lightgray', text_color='black')]
+            ],
+                element_justification='center',
+                background_color='white',
+                vertical_alignment='center'
+            ),
+
+            sg.VSeparator(),
 
             sg.Column([
-                [sg.Text("Agent AI", font=('Helvetica', 14, 'bold'), text_color='white', background_color='#2B2B2B')],
-                [sg.Multiline("Dzień dobry! Jestem agentem Ai.\nOpisz mi prosze swoje objawy a postaram sie dobrac odpowiedni lek.\n", size=(50, 15), key='-CHAT-', disabled=True)],
-                [sg.InputText(key='-INPUT-', size=(40, 1)), sg.Button("Wyślij do agenta")]
-            ], background_color='#2B2B2B', element_justification='left')
+                [sg.Text("Agent AI", font=('Segoe UI', 18, 'bold'), text_color='black', background_color='white',
+                         pad=(0, 20))],
+
+                [sg.Multiline(
+                    "Dzień dobry! Jestem agentem AI.\nOpisz proszę swoje objawy, a postaram się dobrać odpowiedni lek.\n",
+                    size=(50, 18), key='-CHAT-', disabled=True, font=('Segoe UI', 11),
+                    background_color='lightgray', text_color='black', no_scrollbar=False)],
+
+                [sg.Input(key='-INPUT-', **input_style)],
+
+                [sg.Button("Wyślij do agenta", size=(50, 2), button_color=('white', '#89CFF0'), font=('Segoe UI', 12))]
+            ],
+                element_justification='center',
+                background_color='white',
+                vertical_alignment='top'
+            ),
+
+            sg.VPush()
         ]
     ]
 
-    window = sg.Window('Użytkownik - Lista leków', layout, finalize=True, background_color='#2B2B2B')
+    window = sg.Window('Użytkownik - Lista leków', layout, background_color='white', size=(1200, 900), finalize=True)
 
     table_data = load_drugs()
     table_display_data = [[row[0], row[1],row[2], row[6]] for row in table_data if len(row) > 6]
