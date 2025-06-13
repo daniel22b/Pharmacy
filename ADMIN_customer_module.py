@@ -1,3 +1,12 @@
+"""
+Moduł odpowiedzialny za zarządzanie klientami apteki.
+
+Zawiera funkcje do:
+- wczytywania listy klientów z pliku CSV,
+- wyświetlania listy klientów w oknie GUI,
+- rejestracji nowego klienta,
+- weryfikacji poprawności danych logowania klientów.
+"""
 import PySimpleGUI as sg
 import os
 import pandas as pd
@@ -8,6 +17,19 @@ ADRESS_FILE = "address.csv"
 CUSTOMERS_FILE = "customers.csv"
 
 def load_customers(filter_query=''):
+    """
+    Wczytuje listę klientów z pliku CSV i filtruje według zapytania.
+
+    Args:
+        filter_query (str): Tekst filtrowania listy klientów (opcjonalny).
+
+    Returns:
+        list: Lista klientów jako lista list (wierszy), gdzie każdy wiersz
+              zawiera pola: ID, NAME, SURNAME, E-MAIL, PHONE, CREATED, AGE, GENDER.
+
+    Raises:
+        Pokazuje okno błędu, jeśli plik nie może zostać wczytany.
+    """
     try:
         if not os.path.exists(CUSTOMERS_FILE):
             return []
@@ -32,6 +54,15 @@ def load_customers(filter_query=''):
         return []
 
 def show_customers_list_window():
+    """
+    Wyświetla okno GUI z listą klientów oraz opcjami:
+    - wyszukiwania klientów,
+    - dodawania nowego klienta,
+    - usuwania zaznaczonego klienta,
+    - zamknięcia okna.
+
+    Obsługuje interakcje użytkownika oraz aktualizuje tabelę klientów na żywo.
+    """
     layout = [
         [sg.Text('Lista klientów', font=('Segoe UI', 24), background_color='white')],
         [sg.Text('Wyszukaj:', font=('Segoe UI', 14), background_color='white'),
@@ -116,6 +147,15 @@ def show_customers_list_window():
 
 
 def show_register_customers_window():
+    """
+    Wyświetla okno GUI do rejestracji nowego klienta.
+
+    Zbiera dane klienta (imię, nazwisko, email, telefon, hasło, itd.),
+    waliduje je (poprawność emaila, długość hasła, spójność haseł, itp.),
+    a następnie zapisuje nowego klienta do pliku CSV.
+
+    Informuje użytkownika o powodzeniu lub błędach podczas rejestracji.
+    """
     input_style = {
         'font': ('Segoe UI', 14),
         'size': (40, 1),
@@ -212,6 +252,16 @@ def show_register_customers_window():
     window.close()
 
 def validate_user_login(username, password):
+    """
+    Weryfikuje poprawność danych logowania użytkownika na podstawie pliku CSV.
+
+    Args:
+        username (str): Nazwa użytkownika.
+        password (str): Hasło użytkownika.
+
+    Returns:
+        bool: True, jeśli login i hasło są poprawne, False w przeciwnym wypadku.
+    """
     import csv
     if not os.path.exists(CUSTOMERS_FILE):
         return False

@@ -11,6 +11,19 @@ CORRECT_PIN = ""
 sg.theme('DefaultNoMoreNagging')
 
 def create_admin_window():
+    """
+    Tworzy i wyświetla okno panelu administratora.
+
+    Okno zawiera przyciski:
+    - Lista klientów: wyświetla listę zarejestrowanych klientów,
+    - Lista leków: wyświetla listę leków w aptece,
+    - Wyloguj się: zamyka panel i zwraca sterowanie.
+
+    Funkcja działa w pętli, reagując na zdarzenia GUI.
+
+    Returns:
+        bool: Zwraca True po wylogowaniu administratora.
+    """
     layout = [
         [sg.Text("Witaj, Administratorze", font=('Segoe UI', 24), justification='center', background_color='white')],
         [sg.Button('Lista klientów', size=(30, 3), button_color=('white', '#89CFF0'))],
@@ -38,6 +51,18 @@ def create_admin_window():
             window.un_hide()
 
 def start_window():
+    """
+    Tworzy i zwraca okno startowe aplikacji.
+
+    Okno zawiera przyciski:
+    - Zaloguj się,
+    - Zarejestruj się,
+    - Wyjdź,
+    - Skontaktuj się z asystentem AI.
+
+    Returns:
+        sg.Window: Obiekt okna PySimpleGUI.
+    """
     layout = [
         [sg.Text("Witamy w systemie apteki", font=('Segoe UI', 28), justification='center', background_color='white')],
         [sg.Button('Zaloguj się', size=(30, 3), button_color=('white', '#89CFF0'))],
@@ -48,6 +73,16 @@ def start_window():
     return sg.Window('Witamy w systemie apteki', center_layout(layout), background_color='white', size=(1200, 900), element_justification='center', finalize=True)
 
 def login_window():
+    """
+    Tworzy i zwraca okno logowania użytkownika.
+
+    Okno umożliwia podanie nazwy użytkownika i hasła, oraz przyciski:
+    - Zaloguj,
+    - Anuluj.
+
+    Returns:
+        sg.Window: Obiekt okna PySimpleGUI do logowania.
+    """
     layout = [
         [sg.Text('Nazwa użytkownika:', font=('Segoe UI', 16), background_color='white')],
         [sg.Input(key='-UNAME-', **input_style)],
@@ -59,6 +94,21 @@ def login_window():
     return sg.Window('Logowanie', center_layout(layout), background_color='white', size=(1200, 900), element_justification='center', finalize=True)
 
 def main():
+    """
+    Główna pętla programu uruchamiająca GUI apteki.
+
+    Funkcja wyświetla okno startowe i obsługuje:
+    - logowanie (admin lub klient),
+    - rejestrację nowego użytkownika,
+    - wyjście z aplikacji,
+    - kontakt z asystentem AI.
+
+    W przypadku poprawnego logowania:
+    - dla administratora wywołuje create_admin_window(),
+    - dla klienta wywołuje show_user_main_window(uname).
+
+    Po wylogowaniu lub zamknięciu aplikacji funkcja kończy działanie.
+    """
     while True:
         window = start_window()
         while True:

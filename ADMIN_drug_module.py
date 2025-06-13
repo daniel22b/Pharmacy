@@ -1,3 +1,13 @@
+"""
+Moduł GUI do zarządzania lekami z wykorzystaniem PySimpleGUI.
+
+Zawiera funkcje do:
+- wczytywania leków z pliku Excel (drugs.xlsx),
+- wyświetlania okna listy leków z możliwością wyszukiwania, dodawania, edytowania, usuwania i zamawiania,
+- obsługi formularzy dodawania, edycji i zamówienia leku.
+
+Moduł korzysta z klasy DrugDatabase do operacji na bazie leków oraz funkcji add_purchase_to_customer_file do zapisywania zamówień klienta.
+"""
 import PySimpleGUI as sg
 import os
 import pandas as pd
@@ -9,6 +19,17 @@ from layout_utils import center_layout
 db = DrugDatabase()
 
 def load_drugs(filter_query=''):
+    """
+    Wczytuje listę leków z pliku drugs.xlsx, opcjonalnie filtrując wyniki.
+
+    Parametry:
+    filter_query (str): opcjonalny ciąg znaków do filtrowania leków po ID lub nazwie (ignoruje wielkość liter).
+
+    Zwraca:
+    list: lista leków jako listy wartości (ID, nazwa, na receptę, ilość, data dodania, numer recepty, cena).
+
+    W przypadku błędu wyświetla popup z informacją o błędzie i zwraca pustą listę.
+    """
     try:
         if not os.path.exists(DRUGS_FILE):
             return []
@@ -38,6 +59,15 @@ def load_drugs(filter_query=''):
         return []
 
 def show_drug_list_window(user_mode=False, client_id=None):
+    """
+    Wyświetla okno z listą leków w formie tabeli z opcjami wyszukiwania, dodawania, edycji, usuwania i zamawiania.
+
+    Parametry:
+    user_mode (bool): jeśli True, ukrywa przyciski dodawania, edycji i usuwania (tryb użytkownika).
+    client_id (str): identyfikator klienta, wykorzystywany przy składaniu zamówienia.
+
+    Funkcja blokuje dalsze wykonywanie aż do zamknięcia okna.
+    """
     input_style = {
         'font': ('Segoe UI', 14),
         'size': (40, 1),
@@ -142,6 +172,14 @@ def show_drug_list_window(user_mode=False, client_id=None):
 
 
 def show_add_drug_window():
+    """
+    Wyświetla okno dialogowe pozwalające dodać nowy lek do bazy danych.
+
+    Umożliwia podanie nazwy, informacji o recepturze, liczby opakowań oraz ceny.
+    Waliduje dane wejściowe i wyświetla komunikaty o błędach w razie potrzeby.
+
+    Po poprawnym dodaniu leku okno zamyka się.
+    """
     input_style = {
         'font': ('Segoe UI', 14),
         'size': (40, 1),
@@ -222,6 +260,17 @@ def show_add_drug_window():
 
 
 def show_edit_drug_window(row):
+    """
+    Wyświetla okno dialogowe do edycji danych wybranego leku.
+
+    Parametry:
+    row (list): lista wartości leku w formacie [ID, nazwa, na receptę, ilość, data dodania, numer recepty, cena].
+
+    Pozwala zmodyfikować nazwę, receptę, liczbę opakowań, numer recepty i cenę.
+    Po zapisaniu zmian aktualizuje bazę danych.
+
+    Waliduje dane i informuje o błędach.
+    """
     drug_id, drug_name, recept, packages, created, recept_id, price = row
 
     input_style = {
@@ -300,6 +349,15 @@ def show_edit_drug_window(row):
     window.close()
 
 def order_drug_window(row, client_id):
+    """
+    Wyświetla okno dialogowe umożliwiające złożenie zamówienia na wybrany lek.
+
+    Parametry:
+    row (list): lista wartości leku w formacie [ID, nazwa, na receptę, ilość, data dodania, numer recepty, cena].
+    client_id (str): identyfikator klienta składającego zamówienie.
+
+    Umożliwia podanie liczby zamawianych opakowań, waliduje dane i zapisuje zamówienie do pliku klienta.
+    """
     drug_id, drug_name, recept, packages, created, recept_id, price = row
 
     input_style = {
